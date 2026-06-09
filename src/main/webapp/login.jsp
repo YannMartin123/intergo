@@ -7,43 +7,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Connectez-vous à InterGo, la plateforme de gestion RH de votre entreprise.">
     <title>Connexion — InterGo RH</title>
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
 </head>
 <body>
+
+<!-- Ambient background glow -->
+<div class="bg-glow-container">
+    <div class="glow-blob blob-1"></div>
+    <div class="glow-blob blob-2"></div>
+    <div class="glow-blob blob-3"></div>
+</div>
 
 <div class="auth-layout">
 
     <!-- ── Left Panel ── -->
     <div class="auth-left">
         <div class="auth-left-content">
-            <div class="auth-brand fade-in">
-                <div class="auth-brand-icon">🧭</div>
+            <a class="auth-brand fade-in" href="${pageContext.request.contextPath}/">
+                <i class="fa-solid fa-compass navbar-brand-icon"></i>
                 <span class="auth-brand-name">InterGo</span>
-            </div>
+            </a>
 
-            <h1 class="fade-in-delay-1">Gérez vos&nbsp;<br>Ressources Humaines</h1>
+            <h1 class="fade-in-delay-1">Gérez vos<br>Ressources Humaines</h1>
             <p class="fade-in-delay-1">Une plateforme centralisée pour gérer vos employés, rôles, présences et bien plus encore.</p>
 
-            <div class="auth-features fade-in-delay-2">
-                <div class="auth-feature">
-                    <span class="auth-feature-icon">👥</span>
-                    <span class="auth-feature-text">Gestion complète des employés</span>
-                </div>
-                <div class="auth-feature">
-                    <span class="auth-feature-icon">📊</span>
-                    <span class="auth-feature-text">Tableaux de bord & rapports PDF</span>
-                </div>
-                <div class="auth-feature">
-                    <span class="auth-feature-icon">🔐</span>
-                    <span class="auth-feature-text">Contrôle d'accès par rôles</span>
-                </div>
-                <div class="auth-feature">
-                    <span class="auth-feature-icon">⚡</span>
-                    <span class="auth-feature-text">Interface rapide et intuitive</span>
-                </div>
+            <div class="auth-image-container fade-in-delay-2">
+                <img src="${pageContext.request.contextPath}/images/auth_illustration.png" alt="Futuristic 3D security shield" class="auth-image-3d">
             </div>
         </div>
     </div>
@@ -53,20 +49,20 @@
         <div class="auth-card fade-in">
 
             <div class="auth-card-header">
-                <h2>Bon retour 👋</h2>
+                <h2>Bon retour <i class="fa-solid fa-hand-wave text-gradient" style="font-size: 24px;"></i></h2>
                 <p>Connectez-vous à votre espace InterGo</p>
             </div>
 
             <!-- Messages d'erreur / succès -->
             <c:if test="${not empty erreur}">
                 <div class="alert alert-error" role="alert">
-                    <span class="alert-icon">⚠️</span>
+                    <span class="alert-icon"><i class="fa-solid fa-triangle-exclamation"></i></span>
                     <span>${erreur}</span>
                 </div>
             </c:if>
             <c:if test="${not empty message}">
                 <div class="alert alert-success" role="alert">
-                    <span class="alert-icon">✅</span>
+                    <span class="alert-icon"><i class="fa-solid fa-circle-check"></i></span>
                     <span>${message}</span>
                 </div>
             </c:if>
@@ -77,7 +73,7 @@
                 <div class="form-group">
                     <label class="form-label" for="email">Adresse e-mail</label>
                     <div class="input-wrapper">
-                        <span class="input-icon">✉️</span>
+                        <span class="input-icon"><i class="fa-solid fa-envelope"></i></span>
                         <input
                             type="email"
                             id="email"
@@ -89,14 +85,14 @@
                             autocomplete="email"
                         >
                     </div>
-                    <div class="field-error" id="emailError" style="color:#EF4444;font-size:12px;margin-top:4px;display:none;"></div>
+                    <div class="field-error" id="emailError" style="color:#ef4444;font-size:12px;margin-top:4px;display:none;"></div>
                 </div>
 
                 <!-- Mot de passe -->
                 <div class="form-group">
                     <label class="form-label" for="motDePasse">Mot de passe</label>
                     <div class="input-wrapper">
-                        <span class="input-icon">🔒</span>
+                        <span class="input-icon"><i class="fa-solid fa-lock"></i></span>
                         <input
                             type="password"
                             id="motDePasse"
@@ -106,9 +102,9 @@
                             required
                             autocomplete="current-password"
                         >
-                        <button type="button" class="btn-toggle-password" id="togglePassword" aria-label="Afficher/Masquer le mot de passe">👁️</button>
+                        <button type="button" class="btn-toggle-password" id="togglePassword" aria-label="Afficher/Masquer le mot de passe"><i class="fa-solid fa-eye" id="toggleIcon"></i></button>
                     </div>
-                    <div class="field-error" id="mdpError" style="color:#EF4444;font-size:12px;margin-top:4px;display:none;"></div>
+                    <div class="field-error" id="mdpError" style="color:#ef4444;font-size:12px;margin-top:4px;display:none;"></div>
                 </div>
 
                 <!-- Options -->
@@ -122,7 +118,7 @@
                 <!-- Submit -->
                 <button type="submit" id="loginBtn" class="btn btn-primary btn-full btn-lg">
                     <span id="loginBtnText">Se connecter</span>
-                    <span id="loginSpinner" style="display:none;">⏳</span>
+                    <span id="loginSpinner" style="display:none;"><i class="fa-solid fa-circle-notch fa-spin"></i></span>
                 </button>
 
             </form>
@@ -133,10 +129,10 @@
 
             <div style="display:flex;gap:10px;">
                 <button type="button" class="btn btn-outline" style="flex:1;" disabled>
-                    <span>🏢</span> SSO Entreprise
+                    <i class="fa-solid fa-building"></i> SSO Entreprise
                 </button>
                 <button type="button" class="btn btn-outline" style="flex:1;" disabled>
-                    <span>📧</span> LDAP
+                    <i class="fa-solid fa-envelope-open-text"></i> LDAP
                 </button>
             </div>
 
@@ -153,11 +149,12 @@
     // Toggle password visibility
     const toggleBtn = document.getElementById('togglePassword');
     const passwordInput = document.getElementById('motDePasse');
+    const toggleIcon = document.getElementById('toggleIcon');
     let visible = false;
     toggleBtn.addEventListener('click', () => {
         visible = !visible;
         passwordInput.type = visible ? 'text' : 'password';
-        toggleBtn.textContent = visible ? '🙈' : '👁️';
+        toggleIcon.className = visible ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye';
     });
 
     // Client-side validation
@@ -175,13 +172,13 @@
         if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
             emailError.textContent = 'Veuillez entrer une adresse e-mail valide.';
             emailError.style.display = 'block';
-            document.getElementById('email').style.borderColor = '#EF4444';
+            document.getElementById('email').style.borderColor = '#ef4444';
             valid = false;
         }
         if (!mdp || mdp.length < 6) {
             mdpError.textContent = 'Le mot de passe doit contenir au moins 6 caractères.';
             mdpError.style.display = 'block';
-            document.getElementById('motDePasse').style.borderColor = '#EF4444';
+            document.getElementById('motDePasse').style.borderColor = '#ef4444';
             valid = false;
         }
         if (!valid) {
@@ -195,7 +192,7 @@
         const spin = document.getElementById('loginSpinner');
         btn.disabled = true;
         text.textContent = 'Connexion…';
-        spin.style.display = 'inline';
+        spin.style.display = 'inline-block';
     });
 
     // Reset border on input

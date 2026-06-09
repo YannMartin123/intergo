@@ -7,50 +7,46 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Créez votre compte InterGo pour accéder à la plateforme RH.">
     <title>Créer un compte — InterGo RH</title>
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
 </head>
 <body>
+
+<!-- Ambient background glow -->
+<div class="bg-glow-container">
+    <div class="glow-blob blob-1"></div>
+    <div class="glow-blob blob-2"></div>
+    <div class="glow-blob blob-3"></div>
+</div>
 
 <div class="auth-layout">
 
     <!-- ── Left Panel ── -->
     <div class="auth-left">
         <div class="auth-left-content">
-            <div class="auth-brand fade-in">
-                <div class="auth-brand-icon">🧭</div>
+            <a class="auth-brand fade-in" href="${pageContext.request.contextPath}/">
+                <i class="fa-solid fa-compass navbar-brand-icon"></i>
                 <span class="auth-brand-name">InterGo</span>
-            </div>
+            </a>
 
-            <h1 class="fade-in-delay-1">Rejoignez<br>votre équipe ✨</h1>
+            <h1 class="fade-in-delay-1">Rejoignez<br>votre équipe <i class="fa-solid fa-star text-gradient" style="font-size:36px;"></i></h1>
             <p class="fade-in-delay-1">Créez votre compte et accédez à tous les outils RH dont votre entreprise a besoin.</p>
 
-            <div class="auth-features fade-in-delay-2">
-                <div class="auth-feature">
-                    <span class="auth-feature-icon">🛡️</span>
-                    <span class="auth-feature-text">Données sécurisées & chiffrées</span>
-                </div>
-                <div class="auth-feature">
-                    <span class="auth-feature-icon">🎯</span>
-                    <span class="auth-feature-text">Accès basé sur votre rôle</span>
-                </div>
-                <div class="auth-feature">
-                    <span class="auth-feature-icon">📱</span>
-                    <span class="auth-feature-text">Interface responsive & moderne</span>
-                </div>
-                <div class="auth-feature">
-                    <span class="auth-feature-icon">🔔</span>
-                    <span class="auth-feature-text">Notifications et alertes en temps réel</span>
-                </div>
+            <div class="auth-image-container fade-in-delay-2">
+                <img src="${pageContext.request.contextPath}/images/auth_illustration.png" alt="Futuristic 3D security shield" class="auth-image-3d">
             </div>
         </div>
     </div>
 
     <!-- ── Right Panel ── -->
     <div class="auth-right">
-        <div class="auth-card fade-in">
+        <div class="auth-card fade-in neon-glow-active">
 
             <div class="auth-card-header">
                 <h2>Créer un compte</h2>
@@ -60,13 +56,13 @@
             <!-- Messages -->
             <c:if test="${not empty erreur}">
                 <div class="alert alert-error" role="alert">
-                    <span class="alert-icon">⚠️</span>
+                    <span class="alert-icon"><i class="fa-solid fa-triangle-exclamation"></i></span>
                     <span>${erreur}</span>
                 </div>
             </c:if>
             <c:if test="${not empty message}">
                 <div class="alert alert-success" role="alert">
-                    <span class="alert-icon">✅</span>
+                    <span class="alert-icon"><i class="fa-solid fa-circle-check"></i></span>
                     <span>${message}</span>
                 </div>
             </c:if>
@@ -77,7 +73,7 @@
                 <div class="form-group">
                     <label class="form-label" for="email">Adresse e-mail professionnelle</label>
                     <div class="input-wrapper">
-                        <span class="input-icon">✉️</span>
+                        <span class="input-icon"><i class="fa-solid fa-envelope"></i></span>
                         <input
                             type="email"
                             id="email"
@@ -89,14 +85,14 @@
                             autocomplete="email"
                         >
                     </div>
-                    <div class="field-error" id="emailError" style="color:#EF4444;font-size:12px;margin-top:4px;display:none;"></div>
+                    <div class="field-error" id="emailError" style="color:#ef4444;font-size:12px;margin-top:4px;display:none;"></div>
                 </div>
 
                 <!-- Mot de passe -->
                 <div class="form-group">
                     <label class="form-label" for="motDePasse">Mot de passe</label>
                     <div class="input-wrapper">
-                        <span class="input-icon">🔒</span>
+                        <span class="input-icon"><i class="fa-solid fa-lock"></i></span>
                         <input
                             type="password"
                             id="motDePasse"
@@ -106,7 +102,7 @@
                             required
                             autocomplete="new-password"
                         >
-                        <button type="button" class="btn-toggle-password" id="togglePassword" aria-label="Afficher le mot de passe">👁️</button>
+                        <button type="button" class="btn-toggle-password" id="togglePassword" aria-label="Afficher le mot de passe"><i class="fa-solid fa-eye" id="toggleIcon1"></i></button>
                     </div>
                     <!-- Password strength indicator -->
                     <div class="password-strength" id="strengthContainer" style="display:none;">
@@ -118,14 +114,14 @@
                         </div>
                         <span class="strength-label" id="strengthLabel">Sécurité du mot de passe</span>
                     </div>
-                    <div class="field-error" id="mdpError" style="color:#EF4444;font-size:12px;margin-top:4px;display:none;"></div>
+                    <div class="field-error" id="mdpError" style="color:#ef4444;font-size:12px;margin-top:4px;display:none;"></div>
                 </div>
 
                 <!-- Confirmation mot de passe -->
                 <div class="form-group">
                     <label class="form-label" for="confirmerMotDePasse">Confirmer le mot de passe</label>
                     <div class="input-wrapper">
-                        <span class="input-icon">🔑</span>
+                        <span class="input-icon"><i class="fa-solid fa-key"></i></span>
                         <input
                             type="password"
                             id="confirmerMotDePasse"
@@ -135,9 +131,9 @@
                             required
                             autocomplete="new-password"
                         >
-                        <button type="button" class="btn-toggle-password" id="toggleConfirm" aria-label="Afficher la confirmation">👁️</button>
+                        <button type="button" class="btn-toggle-password" id="toggleConfirm" aria-label="Afficher la confirmation"><i class="fa-solid fa-eye" id="toggleIcon2"></i></button>
                     </div>
-                    <div class="field-error" id="confirmError" style="color:#EF4444;font-size:12px;margin-top:4px;display:none;"></div>
+                    <div class="field-error" id="confirmError" style="color:#ef4444;font-size:12px;margin-top:4px;display:none;"></div>
                 </div>
 
                 <!-- Lien avec un employé -->
@@ -147,7 +143,7 @@
                         <span style="font-weight:400;color:var(--text-muted);"> (optionnel)</span>
                     </label>
                     <div class="input-wrapper">
-                        <span class="input-icon">🪪</span>
+                        <span class="input-icon"><i class="fa-solid fa-id-card"></i></span>
                         <input
                             type="number"
                             id="employeId"
@@ -160,26 +156,26 @@
                         >
                     </div>
                     <div style="font-size:12px;color:var(--text-muted);margin-top:5px;">
-                        💡 Si vous êtes déjà enregistré comme employé, liez votre compte avec votre ID.
+                        <i class="fa-solid fa-circle-info" style="color:var(--accent);"></i> Si vous êtes déjà enregistré comme employé, liez votre compte avec votre ID.
                     </div>
-                    <div class="field-error" id="empIdError" style="color:#EF4444;font-size:12px;margin-top:4px;display:none;"></div>
+                    <div class="field-error" id="empIdError" style="color:#ef4444;font-size:12px;margin-top:4px;display:none;"></div>
                 </div>
 
                 <!-- Rôle demandé -->
                 <div class="form-group">
                     <label class="form-label" for="roleDemande">Rôle demandé</label>
                     <div class="input-wrapper">
-                        <span class="input-icon">🎭</span>
+                        <span class="input-icon"><i class="fa-solid fa-user-tag"></i></span>
                         <select id="roleDemande" name="roleDemande" class="form-select">
                             <option value="">-- Sélectionner un rôle --</option>
-                            <option value="EMPLOYE" ${param.roleDemande == 'EMPLOYE' ? 'selected' : ''}>👤 Employé</option>
-                            <option value="MANAGER" ${param.roleDemande == 'MANAGER' ? 'selected' : ''}>📋 Manager</option>
-                            <option value="RH"      ${param.roleDemande == 'RH'      ? 'selected' : ''}>🗂️ Ressources Humaines</option>
-                            <option value="ADMIN"   ${param.roleDemande == 'ADMIN'   ? 'selected' : ''}>⚙️ Administrateur</option>
+                            <option value="EMPLOYE" ${param.roleDemande == 'EMPLOYE' ? 'selected' : ''}>Employé</option>
+                            <option value="MANAGER" ${param.roleDemande == 'MANAGER' ? 'selected' : ''}>Manager</option>
+                            <option value="RH"      ${param.roleDemande == 'RH'      ? 'selected' : ''}>Ressources Humaines</option>
+                            <option value="ADMIN"   ${param.roleDemande == 'ADMIN'   ? 'selected' : ''}>Administrateur</option>
                         </select>
                     </div>
                     <div style="font-size:12px;color:var(--text-muted);margin-top:5px;">
-                        ℹ️ Les rôles Administrateur seront validés par un super-admin.
+                        <i class="fa-solid fa-circle-info" style="color:var(--accent);"></i> Les rôles Administrateur seront validés par un super-admin.
                     </div>
                 </div>
 
@@ -194,13 +190,13 @@
                             <a href="#" class="link-sm">Politique de confidentialité</a>
                         </span>
                     </label>
-                    <div class="field-error" id="cguError" style="color:#EF4444;font-size:12px;margin-top:4px;display:none;"></div>
+                    <div class="field-error" id="cguError" style="color:#ef4444;font-size:12px;margin-top:4px;display:none;"></div>
                 </div>
 
                 <!-- Submit -->
                 <button type="submit" id="registerBtn" class="btn btn-primary btn-full btn-lg">
                     <span id="registerBtnText">Créer mon compte</span>
-                    <span id="registerSpinner" style="display:none;">⏳</span>
+                    <span id="registerSpinner" style="display:none;"><i class="fa-solid fa-circle-notch fa-spin"></i></span>
                 </button>
 
             </form>
@@ -216,18 +212,19 @@
 
 <script>
     // ── Toggle password visibility ──
-    function setupToggle(toggleId, inputId) {
+    function setupToggle(toggleId, inputId, iconId) {
         const btn = document.getElementById(toggleId);
         const inp = document.getElementById(inputId);
+        const icon = document.getElementById(iconId);
         let vis = false;
         btn.addEventListener('click', () => {
             vis = !vis;
             inp.type = vis ? 'text' : 'password';
-            btn.textContent = vis ? '🙈' : '👁️';
+            icon.className = vis ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye';
         });
     }
-    setupToggle('togglePassword', 'motDePasse');
-    setupToggle('toggleConfirm', 'confirmerMotDePasse');
+    setupToggle('togglePassword', 'motDePasse', 'toggleIcon1');
+    setupToggle('toggleConfirm', 'confirmerMotDePasse', 'toggleIcon2');
 
     // ── Password strength ──
     const passwordInput = document.getElementById('motDePasse');
@@ -283,7 +280,7 @@
             const err = document.getElementById(id);
             err.textContent = msg;
             err.style.display = 'block';
-            if (inputId) document.getElementById(inputId).style.borderColor = '#EF4444';
+            if (inputId) document.getElementById(inputId).style.borderColor = '#ef4444';
             valid = false;
         }
 
@@ -310,7 +307,7 @@
         const spin = document.getElementById('registerSpinner');
         btn.disabled = true;
         text.textContent = 'Création en cours…';
-        spin.style.display = 'inline';
+        spin.style.display = 'inline-block';
     });
 
     // Reset borders on input
