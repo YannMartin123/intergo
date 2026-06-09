@@ -3,9 +3,9 @@ package com.ict4dg19.intergo;
 import java.io.*;
 
 import jakarta.servlet.http.*;
-import jakarta.servlet.annotation.*;
+// Pas d'import annotation — servlet déclaré dans web.xml (exigence projet)
 
-@WebServlet(name = "helloServlet", value = "/hello-servlet")
+// Mapping déclaré dans WEB-INF/web.xml : <url-pattern>/hello-servlet</url-pattern>
 public class HelloServlet extends HttpServlet {
     private String message;
 
