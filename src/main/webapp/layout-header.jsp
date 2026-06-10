@@ -6,17 +6,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>InterGo - RH Dashboard</title>
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
 </head>
 <body>
+    <!-- Ambient background glow -->
+    <div class="bg-glow-container">
+        <div class="glow-blob blob-1"></div>
+        <div class="glow-blob blob-2"></div>
+        <div class="glow-blob blob-3"></div>
+    </div>
+
     <!-- Sidebar -->
     <aside class="sidebar">
         <div class="sidebar-header">
-            <h2><i class="fa-solid fa-layer-group"></i> InterGo</h2>
+            <h2 style="display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-compass navbar-brand-icon" style="font-size:24px; animation: rotate-compass 12s infinite linear; background: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i> Inter<span style="color:var(--primary);">Go</span></h2>
         </div>
         <ul class="nav-links">
             <li><a href="${pageContext.request.contextPath}/dashboard" class="${param.active == 'dashboard' ? 'active' : ''}"><i class="fa-solid fa-chart-pie"></i> Dashboard</a></li>
@@ -35,10 +42,15 @@
             <div class="search-bar">
                 <!-- Placeholder for search if needed -->
             </div>
-            <div class="user-profile">
-                <span>Administrateur</span>
-                <i class="fa-solid fa-user-circle fa-2x"></i>
-                <!-- a href="${pageContext.request.contextPath}/logout" class="btn btn-sm btn-danger"><i class="fa-solid fa-sign-out-alt"></i></a -->
+            <div class="user-profile" style="display:flex; align-items:center; gap:16px;">
+                <div style="display:flex; flex-direction:column; align-items:flex-end;">
+                    <span style="font-weight:700; color:var(--text-main);">${not empty sessionScope.userEmail ? sessionScope.userEmail : 'Administrateur'}</span>
+                    <span style="font-size:11px; color:var(--text-muted); text-transform:uppercase; font-weight:600; letter-spacing:0.5px;">Accès Dashboard</span>
+                </div>
+                <div style="width:40px; height:40px; border-radius:50%; background:rgba(99, 102, 241, 0.15); border:1px solid var(--border-glow-active); display:flex; align-items:center; justify-content:center; color:var(--primary);">
+                    <i class="fa-solid fa-user" style="font-size:16px;"></i>
+                </div>
+                <a href="${pageContext.request.contextPath}/logout" class="btn btn-sm btn-danger" style="padding: 8px 12px;" title="Se déconnecter"><i class="fa-solid fa-right-from-bracket"></i></a>
             </div>
         </header>
 

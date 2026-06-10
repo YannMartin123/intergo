@@ -33,7 +33,7 @@
                     <td><c:out value="${emp.poste}" /></td>
                     <td><c:out value="${emp.departement.nom}" /></td>
                     <td>
-                        <span style="padding: 4px 8px; border-radius: 4px; background-color: var(--secondary-color); font-size: 12px;">
+                        <span class="badge" style="background: rgba(139, 92, 246, 0.15); color: #c084fc; border: 1px solid rgba(139, 92, 246, 0.2);">
                             <c:out value="${emp.typeContrat}" />
                         </span>
                     </td>

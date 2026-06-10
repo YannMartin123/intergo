@@ -36,13 +36,13 @@
                     <td>
                         <c:choose>
                             <c:when test="${c.statut == 'APPROUVE'}">
-                                <span style="color: var(--success-color); font-weight: bold;">APPROUVÉ</span>
+                                <span class="badge badge-success">APPROUVÉ</span>
                             </c:when>
                             <c:when test="${c.statut == 'REFUSE'}">
-                                <span style="color: var(--danger-color); font-weight: bold;">REFUSÉ</span>
+                                <span class="badge badge-danger">REFUSÉ</span>
                             </c:when>
                             <c:otherwise>
-                                <span style="color: var(--warning-color); font-weight: bold;">EN ATTENTE</span>
+                                <span class="badge badge-warning">EN ATTENTE</span>
                             </c:otherwise>
                         </c:choose>
                     </td>

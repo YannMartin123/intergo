@@ -113,7 +113,7 @@ INSERT INTO role (nom) VALUES ('ADMIN'), ('RH'), ('MANAGER'), ('EMPLOYE');
 
 -- Insertion d'un utilisateur administrateur de test
 INSERT INTO utilisateur (email, mot_de_passe, est_actif, employe_id) 
-VALUES ('admin@entreprise.com', 'AdminPass123', TRUE, NULL);
+VALUES ('admin@entreprise.com', '$2b$12$YnSXVUq09I4ADXL2nDVaxOlYjgIEB5a9i/Wxp.McDxZABztrhz2kG', TRUE, NULL);
 
 -- Association dynamique de l'utilisateur au rôle ADMIN (évite les erreurs d'ID auto-incrémenté)
 INSERT INTO utilisateur_roles (utilisateur_id, role_id) 

@@ -35,7 +35,7 @@
                     <td><c:out value="${f.salaireBase}" /> €</td>
                     <td><c:out value="${f.primes}" /> €</td>
                     <td><c:out value="${f.retenues}" /> €</td>
-                    <td style="font-weight:bold; color:var(--success-color);"><c:out value="${f.salaireNet}" /> €</td>
+                    <td style="font-weight:bold; color:var(--success);"><c:out value="${f.salaireNet}" /> €</td>
                     <td>
                         <a href="${pageContext.request.contextPath}/fiches-paie/edit?id=${f.id}" class="btn btn-sm btn-primary"><i class="fa-solid fa-pen"></i></a>
                         <a href="${pageContext.request.contextPath}/fiches-paie/delete?id=${f.id}" class="btn btn-sm btn-danger" onclick="return confirm('Êtes-vous sûr ?');"><i class="fa-solid fa-trash"></i></a>
