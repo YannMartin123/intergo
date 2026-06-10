@@ -55,6 +55,9 @@ public class RegisterServlet extends HttpServlet {
 
         request.setCharacterEncoding("UTF-8");
 
+        // reCAPTCHA v3 verification disabled in local environment
+
+
         // 1. Lecture des paramètres du formulaire
         String email               = trim(request.getParameter("email"));
         String motDePasse          = request.getParameter("motDePasse");
@@ -117,6 +120,15 @@ public class RegisterServlet extends HttpServlet {
 
             if (succes) {
                 log("Nouveau compte créé pour : " + email);
+                
+                // Trigger SendGrid welcome email notification
+                String emailSubject = "Bienvenue chez InterGo - Compte créé avec succès";
+                String emailBody = "<h2>Bienvenue chez InterGo !</h2>"
+                        + "<p>Votre compte utilisateur a été créé avec succès pour l'adresse e-mail : <strong>" + email + "</strong>.</p>"
+                        + "<p>Vous pouvez désormais vous connecter à votre espace RH InterGo pour soumettre vos demandes de congés et consulter vos fiches de paie.</p>"
+                        + "<br><hr><p style='font-size:11px;color:#666;'>Ceci est un e-mail automatique de notification de sécurité InterGo.</p>";
+                com.ict4dg19.intergo.util.SendGridEmailUtil.sendEmail(email, emailSubject, emailBody);
+
                 // 6. Redirection vers login avec un message de succès (pattern Post-Redirect-Get)
                 response.sendRedirect(request.getContextPath()
                         + "/login?message=" + encode("Compte créé avec succès ! Vous pouvez vous connecter."));

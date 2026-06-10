@@ -4,7 +4,7 @@
     <jsp:param name="active" value="departement" />
 </jsp:include>
 
-<div class="page-title">
+<div class="page-title fade-in">
     <h1>
         <c:if test="${departement != null}">
             Modifier Département
@@ -16,7 +16,7 @@
     <a href="${pageContext.request.contextPath}/departements" class="btn btn-primary"><i class="fa-solid fa-arrow-left"></i> Retour</a>
 </div>
 
-<div class="card-panel">
+<div class="card-panel fade-in-delay-1">
     <form action="${pageContext.request.contextPath}/departements/${departement != null ? 'update' : 'insert'}" method="post">
         
         <c:if test="${departement != null}">

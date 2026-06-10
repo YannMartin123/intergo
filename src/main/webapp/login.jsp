@@ -14,7 +14,11 @@
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Custom CSS -->
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
+    <!-- Google reCAPTCHA v3 disabled in local
+    <script src="https://www.google.com/recaptcha/api.js?render=6LfIVQQtAAAAAFbeVPQ83R9Xiwzsvz35gfYH9k4j"></script>
+    -->
 </head>
 <body>
 
@@ -68,6 +72,7 @@
             </c:if>
 
             <form id="loginForm" action="${pageContext.request.contextPath}/login" method="post" novalidate>
+                <input type="hidden" name="recaptcha-token" id="recaptcha-token">
 
                 <!-- Email -->
                 <div class="form-group">
@@ -157,9 +162,11 @@
         toggleIcon.className = visible ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye';
     });
 
-    // Client-side validation
+    // Client-side validation & reCAPTCHA trigger
     const loginForm = document.getElementById('loginForm');
     loginForm.addEventListener('submit', function(e) {
+        e.preventDefault(); // Prevent default instant submit
+        
         let valid = true;
         const email = document.getElementById('email').value.trim();
         const mdp   = document.getElementById('motDePasse').value;
@@ -182,7 +189,6 @@
             valid = false;
         }
         if (!valid) {
-            e.preventDefault();
             return;
         }
 
@@ -193,6 +199,9 @@
         btn.disabled = true;
         text.textContent = 'Connexion…';
         spin.style.display = 'inline-block';
+
+        // Directly submit form in local environment
+        loginForm.submit();
     });
 
     // Reset border on input

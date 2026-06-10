@@ -56,6 +56,9 @@ public class LoginServlet extends HttpServlet {
 
         request.setCharacterEncoding("UTF-8");
 
+        // reCAPTCHA v3 verification disabled in local environment
+
+
         // 1. Lecture et nettoyage des paramètres du formulaire
         String email      = trim(request.getParameter("email"));
         String motDePasse = request.getParameter("motDePasse");

@@ -64,7 +64,28 @@ public class FichePaieServlet extends HttpServlet {
     }
 
     private void listFiches(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        List<FichePaie> listFiches = fichePaieDAO.findAll();
+        jakarta.servlet.http.HttpSession session = request.getSession(false);
+        com.ict4dg19.intergo.model.Utilisateur user = (session != null) ? (com.ict4dg19.intergo.model.Utilisateur) session.getAttribute("utilisateurConnecte") : null;
+        
+        List<FichePaie> listFiches = new ArrayList<>();
+        if (user != null) {
+            List<com.ict4dg19.intergo.model.Role> roles = user.getRoles();
+            boolean isAdmin = false;
+            boolean isRh = false;
+            if (roles != null) {
+                for (com.ict4dg19.intergo.model.Role r : roles) {
+                    if ("ADMIN".equals(r.getNom())) isAdmin = true;
+                    if ("RH".equals(r.getNom())) isRh = true;
+                }
+            }
+            
+            if (isAdmin || isRh) {
+                listFiches = fichePaieDAO.findAll();
+            } else {
+                listFiches = fichePaieDAO.findByEmployeId(user.getEmployeId());
+            }
+        }
+        
         request.setAttribute("listFiches", listFiches);
         request.getRequestDispatcher("/fichepaie-list.jsp").forward(request, response);
     }
@@ -108,6 +129,21 @@ public class FichePaieServlet extends HttpServlet {
         f.setSalaireNet(net);
         
         fichePaieDAO.create(f);
+        
+        // Send email notification to employee
+        Employe e = employeDAO.findById(f.getEmployeId());
+        if (e != null && e.getEmail() != null) {
+            String subject = "Nouvelle fiche de paie disponible - " + f.getMois();
+            String htmlContent = "<h3>Votre fiche de paie pour le mois " + f.getMois() + " est disponible</h3>"
+                    + "<p><strong>Salaire de Base :</strong> " + f.getSalaireBase() + " &euro;</p>"
+                    + "<p><strong>Primes :</strong> " + f.getPrimes() + " &euro;</p>"
+                    + "<p><strong>Retenues :</strong> " + f.getRetenues() + " &euro;</p>"
+                    + "<p><strong>Salaire Net a payer :</strong> <span style='font-weight: bold; color: #10b981;'>" + f.getSalaireNet() + " &euro;</span></p>"
+                    + "<p>Vous pouvez vous connecter sur le portail InterGo pour telecharger le document detaille.</p>"
+                    + "<p>Merci,<br>L'equipe RH InterGo</p>";
+            com.ict4dg19.intergo.util.SendGridEmailUtil.sendEmail(e.getEmail(), subject, htmlContent);
+        }
+        
         response.sendRedirect(request.getContextPath() + "/fiches-paie");
     }
 

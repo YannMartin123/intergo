@@ -4,7 +4,7 @@
     <jsp:param name="active" value="conge" />
 </jsp:include>
 
-<div class="page-title">
+<div class="page-title fade-in">
     <h1>
         <c:if test="${conge != null}">Modifier Demande Congé</c:if>
         <c:if test="${conge == null}">Nouvelle Demande Congé</c:if>
@@ -12,7 +12,7 @@
     <a href="${pageContext.request.contextPath}/conges" class="btn btn-primary"><i class="fa-solid fa-arrow-left"></i> Retour</a>
 </div>
 
-<div class="card-panel">
+<div class="card-panel fade-in-delay-1">
     <form action="${pageContext.request.contextPath}/conges/${conge != null ? 'update' : 'insert'}" method="post">
         
         <c:if test="${conge != null}">

@@ -4,7 +4,7 @@
     <jsp:param name="active" value="contrat" />
 </jsp:include>
 
-<div class="page-title">
+<div class="page-title fade-in">
     <h1>
         <c:if test="${contrat != null}">Modifier Contrat</c:if>
         <c:if test="${contrat == null}">Nouveau Contrat</c:if>
@@ -12,7 +12,7 @@
     <a href="${pageContext.request.contextPath}/contrats" class="btn btn-primary"><i class="fa-solid fa-arrow-left"></i> Retour</a>
 </div>
 
-<div class="card-panel">
+<div class="card-panel fade-in-delay-1">
     <form action="${pageContext.request.contextPath}/contrats/${contrat != null ? 'update' : 'insert'}" method="post">
         
         <c:if test="${contrat != null}">

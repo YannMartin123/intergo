@@ -101,6 +101,23 @@ public class EmployeServlet extends HttpServlet {
         e.setSoldeCongesJours(Integer.parseInt(request.getParameter("soldeCongesJours")));
         
         employeDAO.create(e);
+        
+        // Send welcome email to new employee
+        if (e.getEmail() != null) {
+            Departement dept = departementDAO.findById(e.getDepartementId());
+            String deptName = (dept != null) ? dept.getNom() : "Non specifie";
+            String subject = "Bienvenue chez InterGo - Votre compte employe";
+            String htmlContent = "<h3>Bienvenue chez InterGo</h3>"
+                    + "<p>Bonjour " + e.getPrenom() + " " + e.getNom() + ",</p>"
+                    + "<p>Votre profil employe a ete cree avec succes.</p>"
+                    + "<p><strong>Matricule :</strong> " + e.getMatricule() + "</p>"
+                    + "<p><strong>Poste :</strong> " + e.getPoste() + "</p>"
+                    + "<p><strong>Departement :</strong> " + deptName + "</p>"
+                    + "<p>Vous pouvez desormais utiliser votre adresse email pour vous connecter ou vous enregistrer sur le portail InterGo.</p>"
+                    + "<p>Cordialement,<br>L'equipe RH InterGo</p>";
+            com.ict4dg19.intergo.util.SendGridEmailUtil.sendEmail(e.getEmail(), subject, htmlContent);
+        }
+        
         response.sendRedirect(request.getContextPath() + "/employes");
     }
 

@@ -68,7 +68,44 @@ public class CongeServlet extends HttpServlet {
     }
 
     private void listConges(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        List<Conge> listConges = congeDAO.findAll();
+        jakarta.servlet.http.HttpSession session = request.getSession(false);
+        com.ict4dg19.intergo.model.Utilisateur user = (session != null) ? (com.ict4dg19.intergo.model.Utilisateur) session.getAttribute("utilisateurConnecte") : null;
+        
+        List<Conge> listConges = new ArrayList<>();
+        if (user != null) {
+            List<com.ict4dg19.intergo.model.Role> roles = user.getRoles();
+            boolean isAdmin = false;
+            boolean isRh = false;
+            boolean isManager = false;
+            if (roles != null) {
+                for (com.ict4dg19.intergo.model.Role r : roles) {
+                    if ("ADMIN".equals(r.getNom())) isAdmin = true;
+                    if ("RH".equals(r.getNom())) isRh = true;
+                    if ("MANAGER".equals(r.getNom())) isManager = true;
+                }
+            }
+            
+            if (isAdmin || isRh) {
+                listConges = congeDAO.findAll();
+            } else if (isManager) {
+                Employe mgr = (user.getEmployeId() != null) ? employeDAO.findById(user.getEmployeId()) : null;
+                if (mgr != null) {
+                    Long mgrDeptId = mgr.getDepartementId();
+                    List<Conge> allConges = congeDAO.findAll();
+                    listConges = new ArrayList<>();
+                    for (Conge c : allConges) {
+                        if (c.getEmploye() != null && (mgrDeptId.equals(c.getEmploye().getDepartementId()) || c.getEmployeId().equals(user.getEmployeId()))) {
+                            listConges.add(c);
+                        }
+                    }
+                } else {
+                    listConges = congeDAO.findByEmployeId(user.getEmployeId());
+                }
+            } else {
+                listConges = congeDAO.findByEmployeId(user.getEmployeId());
+            }
+        }
+        
         request.setAttribute("listConges", listConges);
         request.getRequestDispatcher("/conge-list.jsp").forward(request, response);
     }
@@ -102,6 +139,21 @@ public class CongeServlet extends HttpServlet {
         c.setStatut("DEMANDE");
         
         congeDAO.create(c);
+        
+        // Send email notification to RH / Admin
+        Employe e = employeDAO.findById(c.getEmployeId());
+        if (e != null) {
+            String subject = "Nouvelle demande de conge - " + e.getNom() + " " + e.getPrenom();
+            String htmlContent = "<h3>Nouvelle demande de conge soumise</h3>"
+                    + "<p><strong>Employe :</strong> " + e.getNom() + " " + e.getPrenom() + " (" + e.getMatricule() + ")</p>"
+                    + "<p><strong>Type de conge :</strong> " + c.getTypeConge() + "</p>"
+                    + "<p><strong>Periode :</strong> du " + c.getDateDebut() + " au " + c.getDateFin() + " (" + c.getNbJours() + " jours)</p>"
+                    + "<p><strong>Motif :</strong> " + (c.getMotif() != null ? c.getMotif() : "Aucun") + "</p>"
+                    + "<p>Veuillez vous connecter sur le portail InterGo pour valider ou refuser cette demande.</p>";
+            com.ict4dg19.intergo.util.SendGridEmailUtil.sendEmail("admin@entreprise.com", subject, htmlContent);
+            com.ict4dg19.intergo.util.SendGridEmailUtil.sendEmail("m.laurent@entreprise.com", subject, htmlContent);
+        }
+        
         response.sendRedirect(request.getContextPath() + "/conges");
     }
 
@@ -133,17 +185,68 @@ public class CongeServlet extends HttpServlet {
         Long id = Long.parseLong(request.getParameter("id"));
         String statut = request.getParameter("statut"); // APPROUVE or REFUSE
         
+        jakarta.servlet.http.HttpSession session = request.getSession(false);
+        com.ict4dg19.intergo.model.Utilisateur user = (session != null) ? (com.ict4dg19.intergo.model.Utilisateur) session.getAttribute("utilisateurConnecte") : null;
+        if (user == null) {
+            response.sendRedirect(request.getContextPath() + "/login");
+            return;
+        }
+        
+        List<com.ict4dg19.intergo.model.Role> roles = user.getRoles();
+        boolean isAdmin = false;
+        boolean isRh = false;
+        boolean isManager = false;
+        if (roles != null) {
+            for (com.ict4dg19.intergo.model.Role r : roles) {
+                if ("ADMIN".equals(r.getNom())) isAdmin = true;
+                if ("RH".equals(r.getNom())) isRh = true;
+                if ("MANAGER".equals(r.getNom())) isManager = true;
+            }
+        }
+        
+        if (!isAdmin && !isRh && !isManager) {
+            response.sendRedirect(request.getContextPath() + "/dashboard?erreur=AccessDeny");
+            return;
+        }
+        
+        if (isManager && !isAdmin && !isRh) {
+            Employe mgr = (user.getEmployeId() != null) ? employeDAO.findById(user.getEmployeId()) : null;
+            Conge c = congeDAO.findById(id);
+            if (mgr != null && c != null) {
+                Employe targetEmp = employeDAO.findById(c.getEmployeId());
+                if (targetEmp == null || !mgr.getDepartementId().equals(targetEmp.getDepartementId())) {
+                    response.sendRedirect(request.getContextPath() + "/dashboard?erreur=AccessDeny");
+                    return;
+                }
+            }
+        }
+        
         Conge c = congeDAO.findById(id);
         if(c != null) {
             c.setStatut(statut);
-            c.setApprouvePar("Admin"); // Default for now
+            c.setApprouvePar(user.getEmail());
             congeDAO.update(c);
             
             // if approved, deduct from employe solde
             if("APPROUVE".equals(statut)) {
                 Employe e = employeDAO.findById(c.getEmployeId());
-                e.setSoldeCongesJours(e.getSoldeCongesJours() - c.getNbJours());
-                employeDAO.update(e);
+                if (e != null) {
+                    e.setSoldeCongesJours(e.getSoldeCongesJours() - c.getNbJours());
+                    employeDAO.update(e);
+                }
+            }
+            
+            // Send email notification to employee
+            Employe e = employeDAO.findById(c.getEmployeId());
+            if (e != null && e.getEmail() != null) {
+                String subject = "Mise a jour de votre demande de conge - " + statut;
+                String htmlContent = "<h3>Votre demande de conge a ete traitee</h3>"
+                        + "<p><strong>Type de conge :</strong> " + c.getTypeConge() + "</p>"
+                        + "<p><strong>Periode :</strong> du " + c.getDateDebut() + " au " + c.getDateFin() + " (" + c.getNbJours() + " jours)</p>"
+                        + "<p><strong>Statut :</strong> <span style='font-weight: bold; color: " + ("APPROUVE".equals(statut) ? "#10b981" : "#ef4444") + ";'>" + statut + "</span></p>"
+                        + "<p><strong>Traitee par :</strong> " + c.getApprouvePar() + "</p>"
+                        + "<p>Merci,<br>L'equipe RH InterGo</p>";
+                com.ict4dg19.intergo.util.SendGridEmailUtil.sendEmail(e.getEmail(), subject, htmlContent);
             }
         }
         response.sendRedirect(request.getContextPath() + "/conges");

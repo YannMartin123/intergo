@@ -4,7 +4,7 @@
     <jsp:param name="active" value="paie" />
 </jsp:include>
 
-<div class="page-title">
+<div class="page-title fade-in">
     <h1>Fiches de Paie</h1>
     <div class="actions">
         <a href="${pageContext.request.contextPath}/fiches-paie/export" class="btn btn-success"><i class="fa-solid fa-file-pdf"></i> Exporter PDF</a>
@@ -12,7 +12,7 @@
     </div>
 </div>
 
-<div class="card-panel table-responsive">
+<div class="card-panel table-responsive fade-in-delay-1">
     <table class="custom-table">
         <thead>
             <tr>

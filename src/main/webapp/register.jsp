@@ -14,7 +14,11 @@
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Custom CSS -->
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
+    <!-- Google reCAPTCHA v3 disabled in local
+    <script src="https://www.google.com/recaptcha/api.js?render=6LfIVQQtAAAAAFbeVPQ83R9Xiwzsvz35gfYH9k4j"></script>
+    -->
 </head>
 <body>
 
@@ -68,6 +72,7 @@
             </c:if>
 
             <form id="registerForm" action="${pageContext.request.contextPath}/register" method="post" novalidate>
+                <input type="hidden" name="recaptcha-token" id="recaptcha-token">
 
                 <!-- Email -->
                 <div class="form-group">
@@ -256,9 +261,11 @@
         strengthLabel.textContent = labels[cls] || '';
     });
 
-    // ── Form Validation ──
+    // ── Form Validation & reCAPTCHA trigger ──
     const registerForm = document.getElementById('registerForm');
     registerForm.addEventListener('submit', function(e) {
+        e.preventDefault(); // Stop instant submission
+        
         let valid = true;
 
         const email   = document.getElementById('email').value.trim();
@@ -300,7 +307,7 @@
             showError('cguError', 'Veuillez accepter les conditions d\'utilisation.', null);
         }
 
-        if (!valid) { e.preventDefault(); return; }
+        if (!valid) { return; }
 
         const btn  = document.getElementById('registerBtn');
         const text = document.getElementById('registerBtnText');
@@ -308,6 +315,9 @@
         btn.disabled = true;
         text.textContent = 'Création en cours…';
         spin.style.display = 'inline-block';
+
+        // Directly submit form in local environment
+        registerForm.submit();
     });
 
     // Reset borders on input
