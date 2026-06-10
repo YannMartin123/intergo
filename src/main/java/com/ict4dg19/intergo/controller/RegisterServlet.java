@@ -140,6 +140,9 @@ public class RegisterServlet extends HttpServlet {
                     redirectToRegisterWithError(request, response,
                             "Une valeur en double a été détectée. Vérifiez vos données.");
                 }
+            } else if (e.getMessage() != null && (e.getMessage().toLowerCase().contains("foreign key") || e.getMessage().contains("fk_utilisateur_employe"))) {
+                redirectToRegisterWithError(request, response,
+                        "L'identifiant employé saisi n'existe pas.");
             } else {
                 redirectToRegisterWithError(request, response,
                         "Une erreur technique est survenue. Veuillez réessayer plus tard.");
