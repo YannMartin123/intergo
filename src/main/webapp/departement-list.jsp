@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <jsp:include page="/layout-header.jsp">
     <jsp:param name="active" value="departement" />
@@ -29,7 +29,7 @@
                     <td><c:out value="${dept.id}" /></td>
                     <td><c:out value="${dept.nom}" /></td>
                     <td><c:out value="${dept.responsable}" /></td>
-                    <td><c:out value="${dept.budgetMasseSalariale}" /> €</td>
+                    <td><c:out value="${dept.budgetMasseSalariale}" /> FCFA</td>
                     <td>
                         <a href="${pageContext.request.contextPath}/departements/edit?id=${dept.id}" class="btn btn-sm btn-primary"><i class="fa-solid fa-pen"></i></a>
                         <a href="${pageContext.request.contextPath}/departements/delete?id=${dept.id}" class="btn btn-sm btn-danger" onclick="return confirm('Êtes-vous sûr ?');"><i class="fa-solid fa-trash"></i></a>

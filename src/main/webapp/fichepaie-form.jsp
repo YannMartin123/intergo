@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <jsp:include page="/layout-header.jsp">
     <jsp:param name="active" value="paie" />
@@ -37,7 +37,7 @@
             </div>
 
             <div class="form-group">
-                <label for="salaireBase">Salaire de Base (€)</label>
+                <label for="salaireBase">Salaire de Base (FCFA)</label>
                 <input type="number" step="0.01" id="salaireBase" name="salaireBase" class="form-control" value="<c:out value='${fiche != null ? fiche.salaireBase : 0}' />" required>
             </div>
 
@@ -47,17 +47,17 @@
             </div>
 
             <div class="form-group">
-                <label for="montantHeuresSup">Montant Heures Sup (€)</label>
+                <label for="montantHeuresSup">Montant Heures Sup (FCFA)</label>
                 <input type="number" step="0.01" id="montantHeuresSup" name="montantHeuresSup" class="form-control" value="<c:out value='${fiche != null ? fiche.montantHeuresSup : 0}' />" required>
             </div>
 
             <div class="form-group">
-                <label for="primes">Primes / Bonus (€)</label>
+                <label for="primes">Primes / Bonus (FCFA)</label>
                 <input type="number" step="0.01" id="primes" name="primes" class="form-control" value="<c:out value='${fiche != null ? fiche.primes : 0}' />" required>
             </div>
 
             <div class="form-group">
-                <label for="retenues">Retenues / Taxes (€)</label>
+                <label for="retenues">Retenues / Taxes (FCFA)</label>
                 <input type="number" step="0.01" id="retenues" name="retenues" class="form-control" value="<c:out value='${fiche != null ? fiche.retenues : 0}' />" required>
             </div>
         </div>

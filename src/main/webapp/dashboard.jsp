@@ -1,3 +1,4 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
 <jsp:include page="/layout-header.jsp">
     <jsp:param name="active" value="dashboard" />
 </jsp:include>
@@ -172,8 +173,8 @@
     // Trigger metrics animations
     animateCounter('stat-employees', ${totalEmployes});
     animateCounter('stat-leaves', ${congesAttente});
-    animateCounter('stat-payroll', ${masseSalariale}, ' €', 2);
-    animateCounter('stat-avg-salary', ${avgSalary}, ' €', 2);
+    animateCounter('stat-payroll', ${masseSalariale}, ' FCFA', 2);
+    animateCounter('stat-avg-salary', ${avgSalary}, ' FCFA', 2);
 
     // ── CHARTS INITIALIZATION ──
     const getCssVar = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
@@ -367,7 +368,7 @@
         data: {
             labels: Object.keys(structureData),
             datasets: [{
-                label: 'Montant Total Cumulé (€)',
+                label: 'Montant Total Cumulé (FCFA)',
                 data: Object.values(structureData),
                 backgroundColor: 'rgba(6, 182, 212, 0.15)',
                 borderColor: accentColor,

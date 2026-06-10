@@ -141,7 +141,7 @@ public class ContratServlet extends HttpServlet {
                 c.getTypeContrat(),
                 c.getDateDebut().toString(),
                 c.getDateFin() != null ? c.getDateFin().toString() : "Indéterminée",
-                c.getSalaire().toString() + " €"
+                c.getSalaire().toString() + " FCFA"
             });
         }
         

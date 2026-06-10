@@ -189,10 +189,10 @@ public class FichePaieServlet extends HttpServlet {
             data.add(new String[]{
                 f.getEmploye().getNom() + " " + f.getEmploye().getPrenom(),
                 f.getMois(),
-                f.getSalaireBase().toString() + " €",
-                f.getPrimes().toString() + " €",
-                f.getRetenues().toString() + " €",
-                f.getSalaireNet().toString() + " €"
+                f.getSalaireBase().toString() + " FCFA",
+                f.getPrimes().toString() + " FCFA",
+                f.getRetenues().toString() + " FCFA",
+                f.getSalaireNet().toString() + " FCFA"
             });
         }
         

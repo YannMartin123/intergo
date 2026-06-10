@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
 <jsp:include page="/layout-header.jsp">
     <jsp:param name="active" value="doc" />
 </jsp:include>
@@ -106,111 +106,173 @@
 <div id="tab-database" class="tab-content fade-in-delay-2" style="display:none;">
     <div class="card-panel" style="margin-bottom:32px;">
         <h2 style="font-size:18px; font-weight:700; margin-bottom:10px; display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-database" style="color:var(--success);"></i> Schéma Entité-Association (MCD / MLD)</h2>
-        <p style="color:var(--text-secondary); font-size:14px; margin-bottom:32px;">Passez la souris sur une table pour mettre en valeur ses liaisons de clés étrangères.</p>
+        <p style="color:var(--text-secondary); font-size:14px; margin-bottom:24px;">Passez la souris sur une table pour mettre en valeur ses relations et activer des effets de flux luminescents.</p>
         
-        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:24px;" id="db-erd-container">
-            <!-- Table 1: Departement -->
-            <div class="erd-table glass-panel" id="table-departement" onmouseenter="highlightErd('departement')" onmouseleave="resetErd()">
-                <div class="erd-table-header" style="background:rgba(6,182,212,0.1); border-bottom:1px solid var(--border-glow); padding:10px 16px; font-weight:700; display:flex; justify-content:between; align-items:center;">
-                    <span>departement</span>
-                    <span style="font-size:10px; padding:2px 6px; border-radius:4px; background:var(--accent); color:white;">PK</span>
-                </div>
-                <div style="padding:12px 16px; font-size:12px; display:flex; flex-direction:column; gap:6px;">
-                    <div>🔑 <strong>id</strong> : BIGINT <span style="color:var(--text-muted);">(auto_inc)</span></div>
-                    <div>📝 <strong>nom</strong> : VARCHAR(100) <span style="color:var(--text-muted);">(unique)</span></div>
-                    <div>👤 <strong>responsable</strong> : VARCHAR(100)</div>
-                    <div>💰 <strong>budget_masse_salariale</strong> : DECIMAL(14,2)</div>
-                </div>
-            </div>
+        <div style="width: 100%; overflow-x: auto; background: #05070e; border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 24px; box-shadow: inset 0 0 30px rgba(0,0,0,0.5);">
+            <svg viewBox="0 0 1000 750" style="width: 100%; height: auto;" id="erd-svg">
+                <!-- Glowing Filter Definitions -->
+                <defs>
+                    <filter id="erd-glow" x="-20%" y="-20%" width="140%" height="140%">
+                        <feGaussianBlur stdDeviation="6" result="blur" />
+                        <feMerge>
+                            <feMergeNode in="blur" />
+                            <feMergeNode in="SourceGraphic" />
+                        </feMerge>
+                    </filter>
+                </defs>
 
-            <!-- Table 2: Employe -->
-            <div class="erd-table glass-panel" id="table-employe" onmouseenter="highlightErd('employe')" onmouseleave="resetErd()">
-                <div class="erd-table-header" style="background:rgba(99,102,241,0.1); border-bottom:1px solid var(--border-glow); padding:10px 16px; font-weight:700; display:flex; justify-content:between; align-items:center;">
-                    <span>employe</span>
-                    <span style="font-size:10px; padding:2px 6px; border-radius:4px; background:var(--primary); color:white;">FK</span>
-                </div>
-                <div style="padding:12px 16px; font-size:12px; display:flex; flex-direction:column; gap:6px;">
-                    <div>🔑 <strong>id</strong> : BIGINT <span style="color:var(--text-muted);">(auto_inc)</span></div>
-                    <div>🔢 <strong>matricule</strong> : VARCHAR(20) <span style="color:var(--text-muted);">(unique)</span></div>
-                    <div>👤 <strong>nom</strong> : VARCHAR(100)</div>
-                    <div>👤 <strong>prenom</strong> : VARCHAR(100)</div>
-                    <div>💼 <strong>poste</strong> : VARCHAR(100)</div>
-                    <div style="color:var(--accent); font-weight:600;">🔗 <strong>departement_id</strong> : BIGINT</div>
-                    <div>📅 <strong>date_embauche</strong> : DATE</div>
-                    <div>💰 <strong>salaire_base</strong> : DECIMAL(10,2)</div>
-                    <div>📄 <strong>type_contrat</strong> : ENUM</div>
-                    <div>📧 <strong>email</strong> : VARCHAR(150)</div>
-                    <div>🏝️ <strong>solde_conges_jours</strong> : INT</div>
-                </div>
-            </div>
+                <!-- RELATIONSHIPS CONNECTORS PATHS -->
+                <!-- 1. departement <-> employe (1:N) -->
+                <path d="M 260 117.5 H 320 V 230 H 380" fill="none" stroke="#475569" stroke-width="2" class="rel-path line-dept-emp" id="line-dept-emp" />
+                
+                <!-- 2. employe <-> contrat_employe (1:N) -->
+                <path d="M 600 240 H 680 V 117.5 H 740" fill="none" stroke="#475569" stroke-width="2" class="rel-path line-emp-contrat" id="line-emp-contrat" />
+                
+                <!-- 3. employe <-> conge (1:N) -->
+                <path d="M 600 290 H 680 V 320 H 740" fill="none" stroke="#475569" stroke-width="2" class="rel-path line-emp-conge" id="line-emp-conge" />
+                
+                <!-- 4. employe <-> fiche_paie (1:N) -->
+                <path d="M 600 340 H 680 V 540 H 740" fill="none" stroke="#475569" stroke-width="2" class="rel-path line-emp-fichepaie" id="line-emp-fichepaie" />
+                
+                <!-- 5. utilisateur <-> employe (1:0..1) -->
+                <path d="M 260 467.5 H 320 V 310 H 380" fill="none" stroke="#475569" stroke-width="2" class="rel-path line-user-emp" id="line-user-emp" />
+                
+                <!-- 6. utilisateur <-> role (N:N) -->
+                <path d="M 150 535 V 575" fill="none" stroke="#475569" stroke-width="2" class="rel-path line-user-role" id="line-user-role" />
+                
+                <!-- 7. notification <-> utilisateur (1:N) -->
+                <path d="M 380 565 H 320 V 490 H 260" fill="none" stroke="#475569" stroke-width="2" class="rel-path line-noti-user" id="line-noti-user" />
 
-            <!-- Table 3: Contrat Employe -->
-            <div class="erd-table glass-panel" id="table-contrat" onmouseenter="highlightErd('contrat')" onmouseleave="resetErd()">
-                <div class="erd-table-header" style="background:rgba(139,92,246,0.1); border-bottom:1px solid var(--border-glow); padding:10px 16px; font-weight:700; display:flex; justify-content:between; align-items:center;">
-                    <span>contrat_employe</span>
-                    <span style="font-size:10px; padding:2px 6px; border-radius:4px; background:var(--secondary); color:white;">FK</span>
-                </div>
-                <div style="padding:12px 16px; font-size:12px; display:flex; flex-direction:column; gap:6px;">
-                    <div>🔑 <strong>id</strong> : BIGINT <span style="color:var(--text-muted);">(auto_inc)</span></div>
-                    <div style="color:var(--primary); font-weight:600;">🔗 <strong>employe_id</strong> : BIGINT</div>
-                    <div>📄 <strong>type_contrat</strong> : ENUM</div>
-                    <div>📅 <strong>date_debut</strong> : DATE</div>
-                    <div>📅 <strong>date_fin</strong> : DATE</div>
-                    <div>💰 <strong>salaire</strong> : DECIMAL(10,2)</div>
-                    <div>🎁 <strong>avantages</strong> : VARCHAR(300)</div>
-                </div>
-            </div>
 
-            <!-- Table 4: Conge -->
-            <div class="erd-table glass-panel" id="table-conge" onmouseenter="highlightErd('conge')" onmouseleave="resetErd()">
-                <div class="erd-table-header" style="background:rgba(245,158,11,0.1); border-bottom:1px solid var(--border-glow); padding:10px 16px; font-weight:700; display:flex; justify-content:between; align-items:center;">
-                    <span>conge</span>
-                    <span style="font-size:10px; padding:2px 6px; border-radius:4px; background:var(--warning); color:white;">FK</span>
-                </div>
-                <div style="padding:12px 16px; font-size:12px; display:flex; flex-direction:column; gap:6px;">
-                    <div>🔑 <strong>id</strong> : BIGINT <span style="color:var(--text-muted);">(auto_inc)</span></div>
-                    <div style="color:var(--primary); font-weight:600;">🔗 <strong>employe_id</strong> : BIGINT</div>
-                    <div>🏝️ <strong>type_conge</strong> : ENUM</div>
-                    <div>📅 <strong>date_debut</strong> : DATE</div>
-                    <div>📅 <strong>date_fin</strong> : DATE</div>
-                    <div>🔢 <strong>nb_jours</strong> : INT</div>
-                    <div>📝 <strong>motif</strong> : VARCHAR(300)</div>
-                    <div>🟢 <strong>statut</strong> : ENUM</div>
-                </div>
-            </div>
+                <!-- RELATION RELATIONSHIPS TEXT LABELS -->
+                <g class="rel-text-group">
+                    <rect x="270" y="165" width="100" height="20" rx="4" fill="#0f172a" stroke="#1e293b" class="rel-text-bg line-dept-emp" />
+                    <text x="320" y="179" fill="#94a3b8" font-size="10" font-family="Outfit, sans-serif" text-anchor="middle" class="rel-text line-dept-emp">contient (1:N)</text>
+                    
+                    <rect x="630" y="145" width="100" height="20" rx="4" fill="#0f172a" stroke="#1e293b" class="rel-text-bg line-emp-contrat" />
+                    <text x="680" y="159" fill="#94a3b8" font-size="10" font-family="Outfit, sans-serif" text-anchor="middle" class="rel-text line-emp-contrat">possède (1:N)</text>
+                    
+                    <rect x="630" y="285" width="100" height="20" rx="4" fill="#0f172a" stroke="#1e293b" class="rel-text-bg line-emp-conge" />
+                    <text x="680" y="299" fill="#94a3b8" font-size="10" font-family="Outfit, sans-serif" text-anchor="middle" class="rel-text line-emp-conge">demande (1:N)</text>
+                    
+                    <rect x="630" y="425" width="100" height="20" rx="4" fill="#0f172a" stroke="#1e293b" class="rel-text-bg line-emp-fichepaie" />
+                    <text x="680" y="439" fill="#94a3b8" font-size="10" font-family="Outfit, sans-serif" text-anchor="middle" class="rel-text line-emp-fichepaie">génère (1:N)</text>
+                    
+                    <rect x="270" y="375" width="100" height="20" rx="4" fill="#0f172a" stroke="#1e293b" class="rel-text-bg line-user-emp" />
+                    <text x="320" y="389" fill="#94a3b8" font-size="10" font-family="Outfit, sans-serif" text-anchor="middle" class="rel-text line-user-emp">associé à (1:0..1)</text>
+                    
+                    <rect x="100" y="545" width="100" height="20" rx="4" fill="#0f172a" stroke="#1e293b" class="rel-text-bg line-user-role" />
+                    <text x="150" y="559" fill="#94a3b8" font-size="10" font-family="Outfit, sans-serif" text-anchor="middle" class="rel-text line-user-role">a rôle (N:N)</text>
+                    
+                    <rect x="270" y="505" width="100" height="20" rx="4" fill="#0f172a" stroke="#1e293b" class="rel-text-bg line-noti-user" />
+                    <text x="320" y="519" fill="#94a3b8" font-size="10" font-family="Outfit, sans-serif" text-anchor="middle" class="rel-text line-noti-user">concerne (1:N)</text>
+                </g>
 
-            <!-- Table 5: Fiche de Paie -->
-            <div class="erd-table glass-panel" id="table-fichepaie" onmouseenter="highlightErd('fichepaie')" onmouseleave="resetErd()">
-                <div class="erd-table-header" style="background:rgba(16,185,129,0.1); border-bottom:1px solid var(--border-glow); padding:10px 16px; font-weight:700; display:flex; justify-content:between; align-items:center;">
-                    <span>fiche_paie</span>
-                    <span style="font-size:10px; padding:2px 6px; border-radius:4px; background:var(--success); color:white;">FK</span>
-                </div>
-                <div style="padding:12px 16px; font-size:12px; display:flex; flex-direction:column; gap:6px;">
-                    <div>🔑 <strong>id</strong> : BIGINT <span style="color:var(--text-muted);">(auto_inc)</span></div>
-                    <div style="color:var(--primary); font-weight:600;">🔗 <strong>employe_id</strong> : BIGINT</div>
-                    <div>📅 <strong>mois</strong> : VARCHAR(7)</div>
-                    <div>💰 <strong>salaire_base</strong> : DECIMAL(10,2)</div>
-                    <div>💰 <strong>heures_sup</strong> : DECIMAL(6,2)</div>
-                    <div>💰 <strong>primes</strong> : DECIMAL(10,2)</div>
-                    <div>💰 <strong>retenues</strong> : DECIMAL(10,2)</div>
-                    <div>💰 <strong>salaire_net</strong> : DECIMAL(10,2)</div>
-                </div>
-            </div>
 
-            <!-- Table 6: Utilisateur -->
-            <div class="erd-table glass-panel" id="table-utilisateur" onmouseenter="highlightErd('utilisateur')" onmouseleave="resetErd()">
-                <div class="erd-table-header" style="background:rgba(239,68,68,0.1); border-bottom:1px solid var(--border-glow); padding:10px 16px; font-weight:700; display:flex; justify-content:between; align-items:center;">
-                    <span>utilisateur</span>
-                    <span style="font-size:10px; padding:2px 6px; border-radius:4px; background:var(--danger); color:white;">FK</span>
-                </div>
-                <div style="padding:12px 16px; font-size:12px; display:flex; flex-direction:column; gap:6px;">
-                    <div>🔑 <strong>id</strong> : BIGINT <span style="color:var(--text-muted);">(auto_inc)</span></div>
-                    <div>📧 <strong>email</strong> : VARCHAR(150)</div>
-                    <div>🔒 <strong>mot_de_passe</strong> : VARCHAR(255)</div>
-                    <div>🟢 <strong>est_actif</strong> : BOOLEAN</div>
-                    <div style="color:var(--primary); font-weight:600;">🔗 <strong>employe_id</strong> : BIGINT <span style="color:var(--text-muted);">(nullable)</span></div>
-                </div>
-            </div>
+                <!-- ENTITIES (TABLES NODES) -->
+                <!-- Table 1: Departement -->
+                <g id="table-departement" class="erd-node" onmouseenter="focusErd('departement')" onmouseleave="blurErd()">
+                    <rect x="40" y="60" width="220" height="115" rx="8" fill="#1e293b" stroke="rgba(6, 182, 212, 0.3)" stroke-width="1.5" class="table-box" />
+                    <rect x="40" y="60" width="220" height="30" rx="8" fill="rgba(6, 182, 212, 0.15)" />
+                    <text x="50" y="79" fill="#ffffff" font-size="12" font-family="Outfit, sans-serif" font-weight="bold">departement</text>
+                    <text x="50" y="110" fill="#a5b4fc" font-size="10.5" font-family="Outfit, sans-serif">🔑 id : BIGINT (PK)</text>
+                    <text x="50" y="128" fill="#e2e8f0" font-size="10.5" font-family="Outfit, sans-serif">📝 nom : VARCHAR(100) (UQ)</text>
+                    <text x="50" y="146" fill="#e2e8f0" font-size="10.5" font-family="Outfit, sans-serif">👤 responsable : VARCHAR(100)</text>
+                    <text x="50" y="164" fill="#e2e8f0" font-size="10.5" font-family="Outfit, sans-serif">💰 budget_masse : DECIMAL(14,2)</text>
+                </g>
+
+                <!-- Table 2: Employe -->
+                <g id="table-employe" class="erd-node" onmouseenter="focusErd('employe')" onmouseleave="blurErd()">
+                    <rect x="380" y="200" width="240" height="220" rx="8" fill="#1e293b" stroke="rgba(99, 102, 241, 0.3)" stroke-width="1.5" class="table-box" />
+                    <rect x="380" y="200" width="240" height="30" rx="8" fill="rgba(99, 102, 241, 0.15)" />
+                    <text x="390" y="219" fill="#ffffff" font-size="12" font-family="Outfit, sans-serif" font-weight="bold">employe</text>
+                    <text x="390" y="248" fill="#a5b4fc" font-size="10.5" font-family="Outfit, sans-serif">🔑 id : BIGINT (PK)</text>
+                    <text x="390" y="265" fill="#e2e8f0" font-size="10.5" font-family="Outfit, sans-serif">🔢 matricule : VARCHAR(20) (UQ)</text>
+                    <text x="390" y="282" fill="#e2e8f0" font-size="10.5" font-family="Outfit, sans-serif">👤 nom & prenom : VARCHAR(100)</text>
+                    <text x="390" y="299" fill="#e2e8f0" font-size="10.5" font-family="Outfit, sans-serif">💼 poste : VARCHAR(100)</text>
+                    <text x="390" y="316" fill="#a5b4fc" font-size="10.5" font-family="Outfit, sans-serif">🔗 departement_id : BIGINT (FK)</text>
+                    <text x="390" y="333" fill="#e2e8f0" font-size="10.5" font-family="Outfit, sans-serif">📅 date_embauche : DATE</text>
+                    <text x="390" y="350" fill="#e2e8f0" font-size="10.5" font-family="Outfit, sans-serif">💰 salaire_base : DECIMAL(10,2)</text>
+                    <text x="390" y="367" fill="#e2e8f0" font-size="10.5" font-family="Outfit, sans-serif">📧 email : VARCHAR(150) (UQ)</text>
+                    <text x="390" y="384" fill="#e2e8f0" font-size="10.5" font-family="Outfit, sans-serif">🏝️ solde_conges_jours : INT</text>
+                </g>
+
+                <!-- Table 3: Contrat Employe -->
+                <g id="table-contrat" class="erd-node" onmouseenter="focusErd('contrat')" onmouseleave="blurErd()">
+                    <rect x="740" y="40" width="220" height="155" rx="8" fill="#1e293b" stroke="rgba(139, 92, 246, 0.3)" stroke-width="1.5" class="table-box" />
+                    <rect x="740" y="40" width="220" height="30" rx="8" fill="rgba(139, 92, 246, 0.15)" />
+                    <text x="750" y="59" fill="#ffffff" font-size="12" font-family="Outfit, sans-serif" font-weight="bold">contrat_employe</text>
+                    <text x="750" y="90" fill="#a5b4fc" font-size="10.5" font-family="Outfit, sans-serif">🔑 id : BIGINT (PK)</text>
+                    <text x="750" y="108" fill="#a5b4fc" font-size="10.5" font-family="Outfit, sans-serif">🔗 employe_id : BIGINT (FK)</text>
+                    <text x="750" y="126" fill="#e2e8f0" font-size="10.5" font-family="Outfit, sans-serif">📄 type_contrat : ENUM</text>
+                    <text x="750" y="144" fill="#e2e8f0" font-size="10.5" font-family="Outfit, sans-serif">📅 debut / fin : DATE</text>
+                    <text x="750" y="162" fill="#e2e8f0" font-size="10.5" font-family="Outfit, sans-serif">💰 salaire : DECIMAL(10,2)</text>
+                    <text x="750" y="180" fill="#e2e8f0" font-size="10.5" font-family="Outfit, sans-serif">🎁 avantages : VARCHAR(300)</text>
+                </g>
+
+                <!-- Table 4: Conge -->
+                <g id="table-conge" class="erd-node" onmouseenter="focusErd('conge')" onmouseleave="blurErd()">
+                    <rect x="740" y="235" width="220" height="170" rx="8" fill="#1e293b" stroke="rgba(245, 158, 11, 0.3)" stroke-width="1.5" class="table-box" />
+                    <rect x="740" y="235" width="220" height="30" rx="8" fill="rgba(245, 158, 11, 0.15)" />
+                    <text x="750" y="254" fill="#ffffff" font-size="12" font-family="Outfit, sans-serif" font-weight="bold">conge</text>
+                    <text x="750" y="285" fill="#a5b4fc" font-size="10.5" font-family="Outfit, sans-serif">🔑 id : BIGINT (PK)</text>
+                    <text x="750" y="303" fill="#a5b4fc" font-size="10.5" font-family="Outfit, sans-serif">🔗 employe_id : BIGINT (FK)</text>
+                    <text x="750" y="321" fill="#e2e8f0" font-size="10.5" font-family="Outfit, sans-serif">🏝️ type_conge : ENUM</text>
+                    <text x="750" y="339" fill="#e2e8f0" font-size="10.5" font-family="Outfit, sans-serif">📅 debut / fin : DATE</text>
+                    <text x="750" y="357" fill="#e2e8f0" font-size="10.5" font-family="Outfit, sans-serif">🔢 nb_jours : INT</text>
+                    <text x="750" y="375" fill="#e2e8f0" font-size="10.5" font-family="Outfit, sans-serif">🟢 statut : ENUM</text>
+                    <text x="750" y="393" fill="#e2e8f0" font-size="10.5" font-family="Outfit, sans-serif">👤 approuve_par : VARCHAR</text>
+                </g>
+
+                <!-- Table 5: Fiche de Paie -->
+                <g id="table-fichepaie" class="erd-node" onmouseenter="focusErd('fichepaie')" onmouseleave="blurErd()">
+                    <rect x="740" y="445" width="220" height="190" rx="8" fill="#1e293b" stroke="rgba(16, 185, 129, 0.3)" stroke-width="1.5" class="table-box" />
+                    <rect x="740" y="445" width="220" height="30" rx="8" fill="rgba(16, 185, 129, 0.15)" />
+                    <text x="750" y="464" fill="#ffffff" font-size="12" font-family="Outfit, sans-serif" font-weight="bold">fiche_paie</text>
+                    <text x="750" y="495" fill="#a5b4fc" font-size="10.5" font-family="Outfit, sans-serif">🔑 id : BIGINT (PK)</text>
+                    <text x="750" y="513" fill="#a5b4fc" font-size="10.5" font-family="Outfit, sans-serif">🔗 employe_id : BIGINT (FK)</text>
+                    <text x="750" y="531" fill="#e2e8f0" font-size="10.5" font-family="Outfit, sans-serif">📅 mois : VARCHAR(7)</text>
+                    <text x="750" y="549" fill="#e2e8f0" font-size="10.5" font-family="Outfit, sans-serif">💰 salaire_base : DECIMAL</text>
+                    <text x="750" y="567" fill="#e2e8f0" font-size="10.5" font-family="Outfit, sans-serif">💰 heures_sup : DECIMAL</text>
+                    <text x="750" y="585" fill="#e2e8f0" font-size="10.5" font-family="Outfit, sans-serif">💰 primes / retenues : DECIMAL</text>
+                    <text x="750" y="603" fill="#e2e8f0" font-size="10.5" font-family="Outfit, sans-serif">💰 salaire_brut : DECIMAL</text>
+                    <text x="750" y="621" fill="#e2e8f0" font-size="10.5" font-family="Outfit, sans-serif">💰 salaire_net : DECIMAL</text>
+                </g>
+
+                <!-- Table 6: Utilisateur -->
+                <g id="table-utilisateur" class="erd-node" onmouseenter="focusErd('utilisateur')" onmouseleave="blurErd()">
+                    <rect x="40" y="400" width="220" height="135" rx="8" fill="#1e293b" stroke="rgba(239, 68, 68, 0.3)" stroke-width="1.5" class="table-box" />
+                    <rect x="40" y="400" width="220" height="30" rx="8" fill="rgba(239, 68, 68, 0.15)" />
+                    <text x="50" y="419" fill="#ffffff" font-size="12" font-family="Outfit, sans-serif" font-weight="bold">utilisateur</text>
+                    <text x="50" y="450" fill="#a5b4fc" font-size="10.5" font-family="Outfit, sans-serif">🔑 id : BIGINT (PK)</text>
+                    <text x="50" y="468" fill="#e2e8f0" font-size="10.5" font-family="Outfit, sans-serif">📧 email : VARCHAR(150) (UQ)</text>
+                    <text x="50" y="486" fill="#e2e8f0" font-size="10.5" font-family="Outfit, sans-serif">🔒 mot_de_passe : VARCHAR(255)</text>
+                    <text x="50" y="504" fill="#e2e8f0" font-size="10.5" font-family="Outfit, sans-serif">🟢 est_actif : BOOLEAN</text>
+                    <text x="50" y="522" fill="#a5b4fc" font-size="10.5" font-family="Outfit, sans-serif">🔗 employe_id : BIGINT (FK, null)</text>
+                </g>
+
+                <!-- Table 7: Role -->
+                <g id="table-role" class="erd-node" onmouseenter="focusErd('role')" onmouseleave="blurErd()">
+                    <rect x="40" y="575" width="220" height="80" rx="8" fill="#1e293b" stroke="rgba(168, 85, 247, 0.3)" stroke-width="1.5" class="table-box" />
+                    <rect x="40" y="575" width="220" height="30" rx="8" fill="rgba(168, 85, 247, 0.15)" />
+                    <text x="50" y="594" fill="#ffffff" font-size="12" font-family="Outfit, sans-serif" font-weight="bold">role</text>
+                    <text x="50" y="625" fill="#a5b4fc" font-size="10.5" font-family="Outfit, sans-serif">🔑 id : BIGINT (PK)</text>
+                    <text x="50" y="643" fill="#e2e8f0" font-size="10.5" font-family="Outfit, sans-serif">📝 nom : VARCHAR(50) (UQ)</text>
+                </g>
+
+                <!-- Table 8: Notification -->
+                <g id="table-notification" class="erd-node" onmouseenter="focusErd('notification')" onmouseleave="blurErd()">
+                    <rect x="380" y="485" width="240" height="160" rx="8" fill="#1e293b" stroke="rgba(16, 185, 129, 0.3)" stroke-width="1.5" class="table-box" />
+                    <rect x="380" y="485" width="240" height="30" rx="8" fill="rgba(16, 185, 129, 0.15)" />
+                    <text x="390" y="504" fill="#ffffff" font-size="12" font-family="Outfit, sans-serif" font-weight="bold">notification</text>
+                    <text x="390" y="535" fill="#a5b4fc" font-size="10.5" font-family="Outfit, sans-serif">🔑 id : BIGINT (PK)</text>
+                    <text x="390" y="553" fill="#e2e8f0" font-size="10.5" font-family="Outfit, sans-serif">📧 expediteur : VARCHAR(150)</text>
+                    <text x="390" y="571" fill="#e2e8f0" font-size="10.5" font-family="Outfit, sans-serif">📧 destinataire : VARCHAR(150)</text>
+                    <text x="390" y="589" fill="#e2e8f0" font-size="10.5" font-family="Outfit, sans-serif">📝 sujet : VARCHAR(255)</text>
+                    <text x="390" y="607" fill="#e2e8f0" font-size="10.5" font-family="Outfit, sans-serif">📅 date_envoi : DATETIME</text>
+                    <text x="390" y="625" fill="#e2e8f0" font-size="10.5" font-family="Outfit, sans-serif">🟢 lu : BOOLEAN</text>
+                </g>
+            </svg>
         </div>
     </div>
 </div>
@@ -328,24 +390,64 @@
         to { stroke-dashoffset: 20; }
     }
 
-    /* ERD highlight styling */
-    .erd-table {
-        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    /* SVG ERD highlight styling */
+    #erd-svg {
+        user-select: none;
+    }
+    .erd-node {
+        transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
         cursor: pointer;
     }
-    .erd-table:hover {
-        transform: translateY(-4px) scale(1.02);
-        box-shadow: 0 12px 30px rgba(99, 102, 241, 0.15);
+    .erd-node .table-box {
+        transition: all 0.35s ease;
     }
-    .erd-table.fade-out-erd {
-        opacity: 0.25;
-        transform: scale(0.98);
-        filter: blur(1px);
+    .erd-node:hover .table-box {
+        fill: #131d30;
     }
-    .erd-table.highlight-erd {
-        border-color: var(--accent) !important;
-        box-shadow: 0 0 20px rgba(6, 182, 212, 0.4) !important;
-        opacity: 1 !important;
+    .rel-path {
+        transition: all 0.35s ease;
+        stroke-dasharray: 6, 4;
+    }
+    .rel-text-bg {
+        transition: all 0.35s ease;
+        opacity: 0.85;
+    }
+    .rel-text {
+        transition: all 0.35s ease;
+    }
+
+    /* Active Glowing highlights */
+    .erd-node.highlight .table-box {
+        stroke: var(--accent) !important;
+        stroke-width: 2.2px !important;
+        filter: drop-shadow(0 0 10px rgba(6, 182, 212, 0.5));
+    }
+    .rel-path.highlight {
+        stroke: var(--accent) !important;
+        stroke-width: 3px !important;
+        filter: drop-shadow(0 0 8px rgba(6, 182, 212, 0.6));
+        animation: flowRelation 1.5s infinite linear;
+    }
+    .rel-text-bg.highlight {
+        stroke: var(--accent) !important;
+        fill: #0c1524 !important;
+        filter: drop-shadow(0 0 4px rgba(6, 182, 212, 0.3));
+    }
+    .rel-text.highlight {
+        fill: var(--accent) !important;
+        font-weight: 700 !important;
+    }
+
+    /* Dimming effects for unrelated items */
+    .erd-node.fade-out,
+    .rel-path.fade-out,
+    .rel-text-bg.fade-out,
+    .rel-text.fade-out {
+        opacity: 0.15;
+    }
+
+    @keyframes flowRelation {
+        to { stroke-dashoffset: -20; }
     }
 
     /* Use Case interactive styling */
@@ -384,35 +486,98 @@
         document.getElementById('btn-' + tabId).classList.add('active-tab-btn');
     };
 
-    // ERD Hover highlighting
-    const highlightErd = (activeTable) => {
-        document.querySelectorAll('.erd-table').forEach(table => {
-            table.classList.add('fade-out-erd');
-        });
-        
-        // Highlight selected table
-        const activeNode = document.getElementById('table-' + activeTable);
+    // Interactive SVG ERD highlighting
+    const focusErd = (tableName) => {
+        // Dim everything by default
+        document.querySelectorAll('.erd-node').forEach(node => node.classList.add('fade-out'));
+        document.querySelectorAll('.rel-path').forEach(path => path.classList.add('fade-out'));
+        document.querySelectorAll('.rel-text').forEach(t => t.classList.add('fade-out'));
+        document.querySelectorAll('.rel-text-bg').forEach(bg => bg.classList.add('fade-out'));
+
+        // Highlight selected node
+        const activeNode = document.getElementById('table-' + tableName);
         if (activeNode) {
-            activeNode.classList.remove('fade-out-erd');
-            activeNode.classList.add('highlight-erd');
+            activeNode.classList.remove('fade-out');
+            activeNode.classList.add('highlight');
         }
 
-        // Highlight related tables depending on keys
-        if (activeTable === 'employe') {
-            document.getElementById('table-departement').classList.remove('fade-out-erd');
-            document.getElementById('table-departement').classList.add('highlight-erd');
-        } else if (activeTable === 'contrat' || activeTable === 'conge' || activeTable === 'fichepaie' || activeTable === 'utilisateur') {
-            document.getElementById('table-employe').classList.remove('fade-out-erd');
-            document.getElementById('table-employe').classList.add('highlight-erd');
-        } else if (activeTable === 'departement') {
-            document.getElementById('table-employe').classList.remove('fade-out-erd');
-            document.getElementById('table-employe').classList.add('highlight-erd');
+        // Determine related elements based on relationships
+        const relationships = {
+            'departement': {
+                nodes: ['employe'],
+                lines: ['line-dept-emp']
+            },
+            'employe': {
+                nodes: ['departement', 'contrat', 'conge', 'fichepaie', 'utilisateur'],
+                lines: ['line-dept-emp', 'line-emp-contrat', 'line-emp-conge', 'line-emp-fichepaie', 'line-user-emp']
+            },
+            'contrat': {
+                nodes: ['employe'],
+                lines: ['line-emp-contrat']
+            },
+            'conge': {
+                nodes: ['employe'],
+                lines: ['line-emp-conge']
+            },
+            'fichepaie': {
+                nodes: ['employe'],
+                lines: ['line-emp-fichepaie']
+            },
+            'utilisateur': {
+                nodes: ['employe', 'role', 'notification'],
+                lines: ['line-user-emp', 'line-user-role', 'line-noti-user']
+            },
+            'role': {
+                nodes: ['utilisateur'],
+                lines: ['line-user-role']
+            },
+            'notification': {
+                nodes: ['utilisateur'],
+                lines: ['line-noti-user']
+            }
+        };
+
+        const rel = relationships[tableName];
+        if (rel) {
+            rel.nodes.forEach(nodeId => {
+                const n = document.getElementById('table-' + nodeId);
+                if (n) {
+                    n.classList.remove('fade-out');
+                    n.classList.add('highlight');
+                }
+            });
+            rel.lines.forEach(lineId => {
+                const path = document.getElementById(lineId);
+                if (path) {
+                    path.classList.remove('fade-out');
+                    path.classList.add('highlight');
+                }
+                // Highlight text labels linked to this path
+                document.querySelectorAll('.rel-text.' + lineId).forEach(t => {
+                    t.classList.remove('fade-out');
+                    t.classList.add('highlight');
+                });
+                document.querySelectorAll('.rel-text-bg.' + lineId).forEach(bg => {
+                    bg.classList.remove('fade-out');
+                    bg.classList.add('highlight');
+                });
+            });
         }
     };
 
-    const resetErd = () => {
-        document.querySelectorAll('.erd-table').forEach(table => {
-            table.classList.remove('fade-out-erd', 'highlight-erd');
+    const blurErd = () => {
+        // Reset all elements
+        document.querySelectorAll('.erd-node').forEach(node => {
+            node.classList.remove('fade-out', 'highlight');
+        });
+        document.querySelectorAll('.rel-path').forEach(path => {
+            path.classList.remove('fade-out', 'highlight');
+        });
+        document.querySelectorAll('.rel-text').forEach(t => {
+            t.classList.remove('fade-out', 'highlight');
+        });
+        document.querySelectorAll('.rel-text-bg').forEach(bg => {
+            bg.classList.remove('fade-out', 'highlight');
         });
     };
 

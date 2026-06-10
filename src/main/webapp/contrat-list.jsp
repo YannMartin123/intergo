@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <jsp:include page="/layout-header.jsp">
     <jsp:param name="active" value="contrat" />
@@ -33,7 +33,7 @@
                     <td><c:out value="${c.typeContrat}" /></td>
                     <td><c:out value="${c.dateDebut}" /></td>
                     <td><c:out value="${c.dateFin != null ? c.dateFin : 'N/A'}" /></td>
-                    <td><c:out value="${c.salaire}" /> €</td>
+                    <td><c:out value="${c.salaire}" /> FCFA</td>
                     <td>
                         <a href="${pageContext.request.contextPath}/contrats/edit?id=${c.id}" class="btn btn-sm btn-primary"><i class="fa-solid fa-pen"></i></a>
                         <a href="${pageContext.request.contextPath}/contrats/delete?id=${c.id}" class="btn btn-sm btn-danger" onclick="return confirm('Êtes-vous sûr ?');"><i class="fa-solid fa-trash"></i></a>

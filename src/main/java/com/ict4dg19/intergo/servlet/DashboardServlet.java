@@ -142,10 +142,10 @@ public class DashboardServlet extends HttpServlet {
 
         // Representation 5: Salary Distribution Groups
         Map<String, Long> salaryDist = new LinkedHashMap<>();
-        salaryDist.put("< 2000€", filteredEmployes.stream().filter(e -> e.getSalaireBase() != null && e.getSalaireBase().doubleValue() < 2000).count());
-        salaryDist.put("2000€ - 4000€", filteredEmployes.stream().filter(e -> e.getSalaireBase() != null && e.getSalaireBase().doubleValue() >= 2000 && e.getSalaireBase().doubleValue() < 4000).count());
-        salaryDist.put("4000€ - 6000€", filteredEmployes.stream().filter(e -> e.getSalaireBase() != null && e.getSalaireBase().doubleValue() >= 4000 && e.getSalaireBase().doubleValue() < 6000).count());
-        salaryDist.put("> 6000€", filteredEmployes.stream().filter(e -> e.getSalaireBase() != null && e.getSalaireBase().doubleValue() >= 6000).count());
+        salaryDist.put("< 2000 FCFA", filteredEmployes.stream().filter(e -> e.getSalaireBase() != null && e.getSalaireBase().doubleValue() < 2000).count());
+        salaryDist.put("2000 FCFA - 4000 FCFA", filteredEmployes.stream().filter(e -> e.getSalaireBase() != null && e.getSalaireBase().doubleValue() >= 2000 && e.getSalaireBase().doubleValue() < 4000).count());
+        salaryDist.put("4000 FCFA - 6000 FCFA", filteredEmployes.stream().filter(e -> e.getSalaireBase() != null && e.getSalaireBase().doubleValue() >= 4000 && e.getSalaireBase().doubleValue() < 6000).count());
+        salaryDist.put("> 6000 FCFA", filteredEmployes.stream().filter(e -> e.getSalaireBase() != null && e.getSalaireBase().doubleValue() >= 6000).count());
 
         // Representation 6 (NEW): Budget vs Actual Salary Spend by Department
         Map<String, Map<String, Double>> budgetVsActual = new LinkedHashMap<>();

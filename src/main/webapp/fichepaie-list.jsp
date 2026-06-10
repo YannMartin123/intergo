@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <jsp:include page="/layout-header.jsp">
     <jsp:param name="active" value="paie" />
@@ -32,10 +32,10 @@
                     <td><c:out value="${f.id}" /></td>
                     <td><c:out value="${f.employe.nom} ${f.employe.prenom}" /></td>
                     <td><c:out value="${f.mois}" /></td>
-                    <td><c:out value="${f.salaireBase}" /> €</td>
-                    <td><c:out value="${f.primes}" /> €</td>
-                    <td><c:out value="${f.retenues}" /> €</td>
-                    <td style="font-weight:bold; color:var(--success);"><c:out value="${f.salaireNet}" /> €</td>
+                    <td><c:out value="${f.salaireBase}" /> FCFA</td>
+                    <td><c:out value="${f.primes}" /> FCFA</td>
+                    <td><c:out value="${f.retenues}" /> FCFA</td>
+                    <td style="font-weight:bold; color:var(--success);"><c:out value="${f.salaireNet}" /> FCFA</td>
                     <td>
                         <a href="${pageContext.request.contextPath}/fiches-paie/edit?id=${f.id}" class="btn btn-sm btn-primary"><i class="fa-solid fa-pen"></i></a>
                         <a href="${pageContext.request.contextPath}/fiches-paie/delete?id=${f.id}" class="btn btn-sm btn-danger" onclick="return confirm('Êtes-vous sûr ?');"><i class="fa-solid fa-trash"></i></a>

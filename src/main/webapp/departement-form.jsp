@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <jsp:include page="/layout-header.jsp">
     <jsp:param name="active" value="departement" />
@@ -35,7 +35,7 @@
             </div>
 
             <div class="form-group">
-                <label for="budgetMasseSalariale">Budget Masse Salariale (€)</label>
+                <label for="budgetMasseSalariale">Budget Masse Salariale (FCFA)</label>
                 <input type="number" step="0.01" id="budgetMasseSalariale" name="budgetMasseSalariale" class="form-control" value="<c:out value='${departement.budgetMasseSalariale}' />" required>
             </div>
         </div>

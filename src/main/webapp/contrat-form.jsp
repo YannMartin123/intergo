@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <jsp:include page="/layout-header.jsp">
     <jsp:param name="active" value="contrat" />
@@ -53,7 +53,7 @@
             </div>
 
             <div class="form-group">
-                <label for="salaire">Salaire (€)</label>
+                <label for="salaire">Salaire (FCFA)</label>
                 <input type="number" step="0.01" id="salaire" name="salaire" class="form-control" value="<c:out value='${contrat.salaire}' />" required>
             </div>
 

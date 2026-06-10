@@ -1,4 +1,5 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -20,6 +21,16 @@
         <div class="glow-blob blob-3"></div>
     </div>
 
+    <!-- Parse roles for sidebar visibility -->
+    <c:set var="isAdmin" value="false" />
+    <c:set var="isRh" value="false" />
+    <c:set var="isManager" value="false" />
+    <c:forEach var="role" items="${sessionScope.utilisateurConnecte.roles}">
+        <c:if test="${role.nom == 'ADMIN'}"><c:set var="isAdmin" value="true" /></c:if>
+        <c:if test="${role.nom == 'RH'}"><c:set var="isRh" value="true" /></c:if>
+        <c:if test="${role.nom == 'MANAGER'}"><c:set var="isManager" value="true" /></c:if>
+    </c:forEach>
+
     <!-- Sidebar -->
     <aside class="sidebar">
         <div class="sidebar-header">
@@ -27,11 +38,18 @@
         </div>
         <ul class="nav-links">
             <li><a href="${pageContext.request.contextPath}/dashboard" class="${param.active == 'dashboard' ? 'active' : ''}"><i class="fa-solid fa-chart-pie"></i> Dashboard</a></li>
-            <li><a href="${pageContext.request.contextPath}/departements" class="${param.active == 'departement' ? 'active' : ''}"><i class="fa-solid fa-building"></i> Départements</a></li>
-            <li><a href="${pageContext.request.contextPath}/employes" class="${param.active == 'employe' ? 'active' : ''}"><i class="fa-solid fa-users"></i> Employés</a></li>
-            <li><a href="${pageContext.request.contextPath}/contrats" class="${param.active == 'contrat' ? 'active' : ''}"><i class="fa-solid fa-file-signature"></i> Contrats</a></li>
+            <c:if test="${isAdmin || isRh}">
+                <li><a href="${pageContext.request.contextPath}/departements" class="${param.active == 'departement' ? 'active' : ''}"><i class="fa-solid fa-building"></i> Départements</a></li>
+            </c:if>
+            <c:if test="${isAdmin || isRh || isManager}">
+                <li><a href="${pageContext.request.contextPath}/employes" class="${param.active == 'employe' ? 'active' : ''}"><i class="fa-solid fa-users"></i> Employés</a></li>
+            </c:if>
+            <c:if test="${isAdmin || isRh}">
+                <li><a href="${pageContext.request.contextPath}/contrats" class="${param.active == 'contrat' ? 'active' : ''}"><i class="fa-solid fa-file-signature"></i> Contrats</a></li>
+            </c:if>
             <li><a href="${pageContext.request.contextPath}/conges" class="${param.active == 'conge' ? 'active' : ''}"><i class="fa-solid fa-calendar-alt"></i> Congés</a></li>
             <li><a href="${pageContext.request.contextPath}/fiches-paie" class="${param.active == 'paie' ? 'active' : ''}"><i class="fa-solid fa-file-invoice-dollar"></i> Fiches de Paie</a></li>
+            <li><a href="${pageContext.request.contextPath}/notifications" class="${param.active == 'notifications' ? 'active' : ''}"><i class="fa-solid fa-bell"></i> Notifications</a></li>
             <li><a href="${pageContext.request.contextPath}/doc.jsp" class="${param.active == 'doc' ? 'active' : ''}"><i class="fa-solid fa-book"></i> Documentation</a></li>
         </ul>
     </aside>

@@ -1,4 +1,5 @@
 -- Drop existing tables in reverse dependency order to avoid foreign key conflicts
+DROP TABLE IF EXISTS notification;
 DROP TABLE IF EXISTS utilisateur_roles;
 DROP TABLE IF EXISTS utilisateur;
 DROP TABLE IF EXISTS role;
@@ -111,6 +112,19 @@ CREATE TABLE utilisateur_roles (
     CONSTRAINT pk_utilisateur_roles PRIMARY KEY (utilisateur_id, role_id),
     CONSTRAINT fk_ur_utilisateur FOREIGN KEY (utilisateur_id) REFERENCES utilisateur(id) ON DELETE CASCADE,
     CONSTRAINT fk_ur_role FOREIGN KEY (role_id) REFERENCES role(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+
+-- 9. Table : notification
+CREATE TABLE notification (
+    id BIGINT AUTO_INCREMENT,
+    expediteur VARCHAR(150) NOT NULL,
+    destinataire VARCHAR(150) NOT NULL,
+    sujet VARCHAR(255) NOT NULL,
+    message TEXT NOT NULL,
+    date_envoi DATETIME NOT NULL,
+    lu BOOLEAN DEFAULT FALSE,
+    CONSTRAINT pk_notification PRIMARY KEY (id)
 ) ENGINE=InnoDB;
 
 
@@ -284,3 +298,26 @@ INSERT INTO utilisateur_roles (utilisateur_id, role_id) VALUES
 (19, (SELECT id FROM role WHERE nom = 'EMPLOYE')),
 (20, (SELECT id FROM role WHERE nom = 'EMPLOYE')),
 (21, (SELECT id FROM role WHERE nom = 'EMPLOYE'));
+
+-- 9. Insertion de 20 Notifications
+INSERT INTO notification (expediteur, destinataire, sujet, message, date_envoi, lu) VALUES
+('admin@entreprise.com', 'm.laurent@entreprise.com', 'Nouveau recrutement', 'Veuillez préparer les documents d\'accueil pour le nouveau collaborateur.', '2026-06-01 09:00:00', TRUE),
+('m.laurent@entreprise.com', 'admin@entreprise.com', 'Rapport mensuel RH', 'Le rapport sur les effectifs de mai 2026 est disponible dans le dossier partagé.', '2026-06-01 14:30:00', TRUE),
+('s.martin@entreprise.com', 'admin@entreprise.com', 'Validation budget Q3', 'J\'ai mis à jour les prévisions budgétaires de la masse salariale pour le troisième trimestre.', '2026-06-02 10:15:00', FALSE),
+('admin@entreprise.com', 's.martin@entreprise.com', 'Re: Validation budget Q3', 'Merci Sophie, je regarde cela cet après-midi.', '2026-06-02 11:00:00', TRUE),
+('jp.dubois@entreprise.com', 'm.laurent@entreprise.com', 'Validation congé annuel', 'Pouvez-vous valider le solde restant de congé pour Lucas Petit ?', '2026-06-03 08:45:00', TRUE),
+('m.laurent@entreprise.com', 'jp.dubois@entreprise.com', 'Re: Validation congé annuel', 'C\'est fait, son solde de congés a été mis à jour.', '2026-06-03 09:30:00', TRUE),
+('l.petit@entreprise.com', 'admin@entreprise.com', 'Achat de serveurs R&D', 'La demande de devis pour les nouveaux serveurs a été envoyée au service achats.', '2026-06-04 16:20:00', FALSE),
+('admin@entreprise.com', 'l.petit@entreprise.com', 'Re: Achat de serveurs R&D', 'Reçu. Tiens-moi informé dès que tu as le retour de Nathan.', '2026-06-04 17:00:00', FALSE),
+('n.simon@entreprise.com', 'l.petit@entreprise.com', 'Devis serveurs R&D disponible', 'Le devis du fournisseur IT a été reçu et validé par mon équipe. A vous de jouer.', '2026-06-05 11:10:00', FALSE),
+('admin@entreprise.com', 'jp.dubois@entreprise.com', 'Réunion stratégique', 'N\'oubliez pas la réunion du comité de direction demain à 10h en salle de conférence.', '2026-06-05 15:00:00', TRUE),
+('jp.dubois@entreprise.com', 'admin@entreprise.com', 'Re: Réunion stratégique', 'Entendu, je serai présent avec mes slides.', '2026-06-05 15:45:00', TRUE),
+('m.laurent@entreprise.com', 'c.vincent@entreprise.com', 'Entretien annuel', 'Votre entretien annuel d\'évaluation est planifié pour le jeudi 11 juin à 14h.', '2026-06-08 10:00:00', FALSE),
+('c.vincent@entreprise.com', 'm.laurent@entreprise.com', 'Re: Entretien annuel', 'C\'est bien noté, merci Marie.', '2026-06-08 11:30:00', TRUE),
+('m.laurent@entreprise.com', 'j.francois@entreprise.com', 'Entretien annuel', 'Votre entretien annuel d\'évaluation est planifié pour le jeudi 11 juin à 15h30.', '2026-06-08 10:05:00', FALSE),
+('j.francois@entreprise.com', 'm.laurent@entreprise.com', 'Re: Entretien annuel', 'Entendu, je prépare mon auto-évaluation.', '2026-06-08 14:00:00', TRUE),
+('m.laurent@entreprise.com', 'a.girard@entreprise.com', 'Entretien annuel', 'Votre entretien annuel d\'évaluation est planifié pour le vendredi 12 juin à 09h30.', '2026-06-08 10:10:00', FALSE),
+('admin@entreprise.com', 'm.fontaine@entreprise.com', 'Alerte sécurité réseau', 'Une tentative d\'accès suspecte a été détectée sur le serveur principal hier soir.', '2026-06-09 08:30:00', FALSE),
+('m.fontaine@entreprise.com', 'admin@entreprise.com', 'Re: Alerte sécurité réseau', 'Je lance une analyse complète des logs et renforce les règles de pare-feu.', '2026-06-09 09:15:00', FALSE),
+('m.laurent@entreprise.com', 'z.lemaire@entreprise.com', 'Fin de stage', 'Pensez à m\'envoyer votre rapport de stage pour signature avant la fin de semaine.', '2026-06-09 11:00:00', FALSE),
+('z.lemaire@entreprise.com', 'm.laurent@entreprise.com', 'Re: Fin de stage', 'Oui, je vous l\'envoie d\'ici demain après-midi.', '2026-06-09 11:45:00', TRUE);
