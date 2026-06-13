@@ -101,9 +101,10 @@ public class CongeServlet extends HttpServlet {
                 } else {
                     listConges = congeDAO.findByEmployeId(user.getEmployeId());
                 }
-            } else {
+            } else if (user.getEmployeId() != null) {
                 listConges = congeDAO.findByEmployeId(user.getEmployeId());
             }
+            // else: utilisateur sans fiche employé associée (ex: admin pur) -> liste vide
         }
         
         request.setAttribute("listConges", listConges);

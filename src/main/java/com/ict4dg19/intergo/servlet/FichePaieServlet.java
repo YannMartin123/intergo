@@ -81,9 +81,10 @@ public class FichePaieServlet extends HttpServlet {
             
             if (isAdmin || isRh) {
                 listFiches = fichePaieDAO.findAll();
-            } else {
+            } else if (user.getEmployeId() != null) {
                 listFiches = fichePaieDAO.findByEmployeId(user.getEmployeId());
             }
+            // else: user has no associated employe (e.g. pure admin without employe record) -> empty list
         }
         
         request.setAttribute("listFiches", listFiches);
@@ -135,10 +136,10 @@ public class FichePaieServlet extends HttpServlet {
         if (e != null && e.getEmail() != null) {
             String subject = "Nouvelle fiche de paie disponible - " + f.getMois();
             String htmlContent = "<h3>Votre fiche de paie pour le mois " + f.getMois() + " est disponible</h3>"
-                    + "<p><strong>Salaire de Base :</strong> " + f.getSalaireBase() + " &euro;</p>"
-                    + "<p><strong>Primes :</strong> " + f.getPrimes() + " &euro;</p>"
-                    + "<p><strong>Retenues :</strong> " + f.getRetenues() + " &euro;</p>"
-                    + "<p><strong>Salaire Net a payer :</strong> <span style='font-weight: bold; color: #10b981;'>" + f.getSalaireNet() + " &euro;</span></p>"
+                    + "<p><strong>Salaire de Base :</strong> " + f.getSalaireBase() + " FCFA</p>"
+                    + "<p><strong>Primes :</strong> " + f.getPrimes() + " FCFA</p>"
+                    + "<p><strong>Retenues :</strong> " + f.getRetenues() + " FCFA</p>"
+                    + "<p><strong>Salaire Net a payer :</strong> <span style='font-weight: bold; color: #10b981;'>" + f.getSalaireNet() + " FCFA</span></p>"
                     + "<p>Vous pouvez vous connecter sur le portail InterGo pour telecharger le document detaille.</p>"
                     + "<p>Merci,<br>L'equipe RH InterGo</p>";
             com.ict4dg19.intergo.util.SendGridEmailUtil.sendEmail(e.getEmail(), subject, htmlContent);
