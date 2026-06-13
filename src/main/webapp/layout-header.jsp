@@ -50,6 +50,7 @@
             <li><a href="${pageContext.request.contextPath}/conges" class="${param.active == 'conge' ? 'active' : ''}"><i class="fa-solid fa-calendar-alt"></i> Congés</a></li>
             <li><a href="${pageContext.request.contextPath}/fiches-paie" class="${param.active == 'paie' ? 'active' : ''}"><i class="fa-solid fa-file-invoice-dollar"></i> Fiches de Paie</a></li>
             <li><a href="${pageContext.request.contextPath}/notifications" class="${param.active == 'notifications' ? 'active' : ''}"><i class="fa-solid fa-bell"></i> Notifications</a></li>
+            <li><a href="${pageContext.request.contextPath}/chat" class="${param.active == 'chat' ? 'active' : ''}"><i class="fa-solid fa-comments"></i> Chat en temps réel</a></li>
             <li><a href="${pageContext.request.contextPath}/doc.jsp" class="${param.active == 'doc' ? 'active' : ''}"><i class="fa-solid fa-book"></i> Documentation</a></li>
         </ul>
     </aside>

@@ -16,6 +16,7 @@
     <button onclick="switchTab('tab-database')" class="btn btn-outline" id="btn-tab-database" style="font-size:14px; padding:10px 20px;">MCD / MLD Schema</button>
     <button onclick="switchTab('tab-classes')" class="btn btn-outline" id="btn-tab-classes" style="font-size:14px; padding:10px 20px;">Diagramme de Classes</button>
     <button onclick="switchTab('tab-usecases')" class="btn btn-outline" id="btn-tab-usecases" style="font-size:14px; padding:10px 20px;">Cas d'Utilisation</button>
+    <button onclick="switchTab('tab-presentation')" class="btn btn-outline" id="btn-tab-presentation" style="font-size:14px; padding:10px 20px;">Présentation PDF</button>
 </div>
 
 <!-- ════════ TAB: ARCHITECTURE & FLUX ════════ -->
@@ -327,26 +328,96 @@
 
 <!-- ════════ TAB: USE CASES ════════ -->
 <div id="tab-usecases" class="tab-content fade-in-delay-2" style="display:none;">
-    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:32px; margin-bottom:32px;">
+    <div style="display:grid; grid-template-columns: 1.2fr 0.8fr; gap:32px; margin-bottom:32px;">
         
         <!-- Interactive Use Case Map -->
         <div class="card-panel">
-            <h2 style="font-size:18px; font-weight:700; margin-bottom:20px; display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-circle-dot" style="color:var(--accent);"></i> Cas d'Utilisation Applicatifs</h2>
-            <p style="color:var(--text-secondary); font-size:14px; margin-bottom:24px;">Cliquez sur un cas d'utilisation pour lancer une simulation de scan terminal de sa description.</p>
+            <h2 style="font-size:18px; font-weight:700; margin-bottom:10px; display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-circle-dot" style="color:var(--accent);"></i> Diagramme de Cas d'Utilisation Interactif</h2>
+            <p style="color:var(--text-secondary); font-size:14px; margin-bottom:24px;">Cliquez sur une bulle de cas d'utilisation pour mettre en valeur les acteurs concernés et lancer sa description.</p>
             
-            <div style="display:flex; flex-direction:column; gap:12px;">
-                <div class="usecase-node glass-panel" onclick="runScan('uc1', 'Permet à un administrateur ou agent RH de recruter de nouveaux employés, définir leur contrat (CDI, CDD, etc.) et leur salaire de base. Un email SendGrid d\'accueil est automatiquement envoyé à la création de leur compte utilisateur lié.')">
-                    🎯 UC1: Recrutement & Création Employé
-                </div>
-                <div class="usecase-node glass-panel" onclick="runScan('uc2', 'Permet à un employé de soumettre une demande de congé. Son manager ou les RH reçoivent une alerte et peuvent accepter ou refuser la demande, déduisant alors les jours demandés du solde global de l\'employé.')">
-                    🎯 UC2: Gestion & Validation des Congés
-                </div>
-                <div class="usecase-node glass-panel" onclick="runScan('uc3', 'Chaque mois, les RH émettent les fiches de paie en intégrant les heures supplémentaires et primes. Le calcul du salaire brut et net est automatisé et un email est envoyé à l\'employé concerné.')">
-                    🎯 UC3: Calcul & Émission des Fiches de Paie
-                </div>
-                <div class="usecase-node glass-panel" onclick="runScan('uc4', 'Vérification en temps réel que les requêtes proviennent d\'utilisateurs connectés et habilités pour la section demandée (SecurityFilter), limitant par exemple la gestion des contrats aux seuls RH et Administrateurs.')">
-                    🎯 UC4: Contrôle des Rôles & Sécurité (RBAC)
-                </div>
+            <div style="background: #05070e; border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 16px;">
+                <svg viewBox="0 0 540 420" style="width: 100%; height: auto;" id="uc-svg">
+                    <defs>
+                        <filter id="uc-glow" x="-20%" y="-20%" width="140%" height="140%">
+                            <feGaussianBlur stdDeviation="4" result="blur" />
+                            <feMerge>
+                                <feMergeNode in="blur" />
+                                <feMergeNode in="SourceGraphic" />
+                            </feMerge>
+                        </filter>
+                    </defs>
+
+                    <!-- CONNECTORS -->
+                    <!-- UC1 Lines -->
+                    <line x1="120" y1="80" x2="280" y2="80" stroke="#475569" stroke-width="1.5" class="uc-line uc-line-uc1" />
+                    <line x1="120" y1="150" x2="280" y2="80" stroke="#475569" stroke-width="1.5" class="uc-line uc-line-uc1" />
+                    <!-- UC2 Lines -->
+                    <line x1="120" y1="290" x2="280" y2="150" stroke="#475569" stroke-width="1.5" class="uc-line uc-line-uc2" />
+                    <!-- UC3 Lines -->
+                    <line x1="120" y1="220" x2="280" y2="220" stroke="#475569" stroke-width="1.5" class="uc-line uc-line-uc3" />
+                    <line x1="120" y1="150" x2="280" y2="220" stroke="#475569" stroke-width="1.5" class="uc-line uc-line-uc3" />
+                    <!-- UC4 Lines -->
+                    <line x1="120" y1="150" x2="280" y2="290" stroke="#475569" stroke-width="1.5" class="uc-line uc-line-uc4" />
+                    <line x1="120" y1="290" x2="280" y2="290" stroke="#475569" stroke-width="1.5" class="uc-line uc-line-uc4" />
+                    <!-- UC5 Lines (Chat - all) -->
+                    <line x1="120" y1="80" x2="280" y2="360" stroke="#475569" stroke-width="1.5" class="uc-line uc-line-uc5" />
+                    <line x1="120" y1="150" x2="280" y2="360" stroke="#475569" stroke-width="1.5" class="uc-line uc-line-uc5" />
+                    <line x1="120" y1="220" x2="280" y2="360" stroke="#475569" stroke-width="1.5" class="uc-line uc-line-uc5" />
+                    <line x1="120" y1="290" x2="280" y2="360" stroke="#475569" stroke-width="1.5" class="uc-line uc-line-uc5" />
+
+                    <!-- ACTORS -->
+                    <!-- Admin -->
+                    <g id="actor-admin" class="uc-actor">
+                        <circle cx="80" cy="70" r="16" fill="rgba(239, 68, 68, 0.15)" stroke="var(--danger)" stroke-width="1.5" />
+                        <text x="80" y="74" fill="var(--danger)" font-size="11" font-weight="900" text-anchor="middle">AD</text>
+                        <text x="80" y="98" fill="#e2e8f0" font-size="10" font-family="Outfit, sans-serif" font-weight="bold" text-anchor="middle">Administrateur</text>
+                    </g>
+                    <!-- RH -->
+                    <g id="actor-rh" class="uc-actor">
+                        <circle cx="80" cy="140" r="16" fill="rgba(16, 185, 129, 0.15)" stroke="var(--success)" stroke-width="1.5" />
+                        <text x="80" y="144" fill="var(--success)" font-size="11" font-weight="900" text-anchor="middle">RH</text>
+                        <text x="80" y="168" fill="#e2e8f0" font-size="10" font-family="Outfit, sans-serif" font-weight="bold" text-anchor="middle">Agent RH</text>
+                    </g>
+                    <!-- Manager -->
+                    <g id="actor-manager" class="uc-actor">
+                        <circle cx="80" cy="210" r="16" fill="rgba(245, 158, 11, 0.15)" stroke="var(--warning)" stroke-width="1.5" />
+                        <text x="80" y="214" fill="var(--warning)" font-size="11" font-weight="900" text-anchor="middle">MG</text>
+                        <text x="80" y="238" fill="#e2e8f0" font-size="10" font-family="Outfit, sans-serif" font-weight="bold" text-anchor="middle">Manager</text>
+                    </g>
+                    <!-- Employe -->
+                    <g id="actor-employe" class="uc-actor">
+                        <circle cx="80" cy="280" r="16" fill="rgba(6, 182, 212, 0.15)" stroke="var(--accent)" stroke-width="1.5" />
+                        <text x="80" y="284" fill="var(--accent)" font-size="11" font-weight="900" text-anchor="middle">EM</text>
+                        <text x="80" y="308" fill="#e2e8f0" font-size="10" font-family="Outfit, sans-serif" font-weight="bold" text-anchor="middle">Employé</text>
+                    </g>
+
+                    <!-- USE CASES -->
+                    <!-- UC1 -->
+                    <g id="uc-uc1" class="uc-bubble-node" onclick="clickUcase('uc1', 'Permet à un Administrateur ou agent RH de recruter de nouveaux employés, définir leur contrat (CDI, CDD, etc.) et leur salaire. Un email d\'accueil Gmail SMTP est automatiquement envoyé à la création.', ['actor-admin', 'actor-rh'])">
+                        <rect x="280" y="55" width="220" height="50" rx="25" fill="#1e293b" stroke="rgba(99,102,241,0.4)" stroke-width="1.5" class="uc-rect" />
+                        <text x="390" y="84" fill="#ffffff" font-size="11" font-family="Outfit, sans-serif" font-weight="bold" text-anchor="middle">UC1: Gérer Employés & Contrats</text>
+                    </g>
+                    <!-- UC2 -->
+                    <g id="uc-uc2" class="uc-bubble-node" onclick="clickUcase('uc2', 'Permet à un Employé de soumettre une demande de congé. Son manager ou les RH reçoivent une notification et décident d\'accepter ou de refuser, déduisant alors les jours demandés du solde.', ['actor-employe'])">
+                        <rect x="280" y="125" width="220" height="50" rx="25" fill="#1e293b" stroke="rgba(99,102,241,0.4)" stroke-width="1.5" class="uc-rect" />
+                        <text x="390" y="154" fill="#ffffff" font-size="11" font-family="Outfit, sans-serif" font-weight="bold" text-anchor="middle">UC2: Demander un Congé</text>
+                    </g>
+                    <!-- UC3 -->
+                    <g id="uc-uc3" class="uc-bubble-node" onclick="clickUcase('uc3', 'Permet au Manager ou à l\'Agent RH de valider ou de refuser les demandes de congé de son équipe ou des collaborateurs.', ['actor-manager', 'actor-rh'])">
+                        <rect x="280" y="195" width="220" height="50" rx="25" fill="#1e293b" stroke="rgba(99,102,241,0.4)" stroke-width="1.5" class="uc-rect" />
+                        <text x="390" y="224" fill="#ffffff" font-size="11" font-family="Outfit, sans-serif" font-weight="bold" text-anchor="middle">UC3: Valider les Congés</text>
+                    </g>
+                    <!-- UC4 -->
+                    <g id="uc-uc4" class="uc-bubble-node" onclick="clickUcase('uc4', 'Permet à l\'Agent RH de générer des fiches de paie mensuelles (brut, net, heures sup, primes). L\'Employé peut consulter et télécharger son registre de fiches de paie.', ['actor-rh', 'actor-employe'])">
+                        <rect x="280" y="265" width="220" height="50" rx="25" fill="#1e293b" stroke="rgba(99,102,241,0.4)" stroke-width="1.5" class="uc-rect" />
+                        <text x="390" y="294" fill="#ffffff" font-size="11" font-family="Outfit, sans-serif" font-weight="bold" text-anchor="middle">UC4: Gérer & Consulter la Paie</text>
+                    </g>
+                    <!-- UC5 -->
+                    <g id="uc-uc5" class="uc-bubble-node" onclick="clickUcase('uc5', 'Permet à tout collaborateur (Admin, RH, Manager, Employé) d\'échanger en temps réel via WebSockets, de transférer des fichiers validés et de recevoir des alertes par mail et notifications.', ['actor-admin', 'actor-rh', 'actor-manager', 'actor-employe'])">
+                        <rect x="280" y="335" width="220" height="50" rx="25" fill="#1e293b" stroke="rgba(6,182,212,0.4)" stroke-width="1.5" class="uc-rect" />
+                        <text x="390" y="364" fill="#ffffff" font-size="11" font-family="Outfit, sans-serif" font-weight="bold" text-anchor="middle">UC5: Chat en temps réel & Partage</text>
+                    </g>
+                </svg>
             </div>
         </div>
 
@@ -360,8 +431,28 @@
             </div>
             
             <div id="terminal-content" style="color:#a5b4fc; font-size:13px; line-height:1.6; min-height:150px; overflow-y:auto;">
+                [InterGo Shell] Prêt. Cliquez sur une bulle de cas d'utilisation pour afficher sa simulation de fonctionnement et ses acteurs...
+            </div>
+        </div>
+    </div>
+</div>0px;">terminal-usecases.sh</span>
+            </div>
+            
+            <div id="terminal-content" style="color:#a5b4fc; font-size:13px; line-height:1.6; min-height:150px; overflow-y:auto;">
                 [InterGo Shell] Prêt. Cliquez sur un cas d'utilisation pour afficher sa description détaillée...
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- ════════ TAB: PRÉSENTATION PDF ════════ -->
+<div id="tab-presentation" class="tab-content fade-in-delay-2" style="display:none;">
+    <div class="card-panel" style="margin-bottom:32px;">
+        <h2 style="font-size:18px; font-weight:700; margin-bottom:20px; display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-file-pdf" style="color:var(--danger);"></i> Présentation du Projet InterGo</h2>
+        <p style="color:var(--text-secondary); font-size:14px; margin-bottom:24px;">Visualisez directement la présentation officielle du projet ci-dessous.</p>
+        
+        <div style="background: rgba(0,0,0,0.15); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; overflow: hidden; padding: 12px;">
+            <iframe src="${pageContext.request.contextPath}/docs/INTERGO_Presentation.pdf" width="100%" height="700px" style="border: none; border-radius: 6px;"></iframe>
         </div>
     </div>
 </div>
@@ -601,6 +692,46 @@
                 clearInterval(typingTimer);
             }
         }, speed);
+    };
+    // Interactive Use Case Diagram handling
+    const clickUcase = (id, text, actorIds) => {
+        // Highlight the selected use case rect
+        document.querySelectorAll('.uc-rect').forEach(rect => {
+            rect.style.fill = '#1e293b';
+            rect.style.stroke = 'rgba(99, 102, 241, 0.4)';
+            rect.style.filter = 'none';
+        });
+        
+        const activeNode = document.querySelector('#uc-' + id + ' .uc-rect');
+        if (activeNode) {
+            activeNode.style.fill = '#131d30';
+            activeNode.style.stroke = 'var(--accent)';
+            activeNode.style.filter = 'url(#uc-glow)';
+        }
+
+        // Highlight connected lines
+        document.querySelectorAll('.uc-line').forEach(line => {
+            line.style.stroke = '#475569';
+            line.style.strokeWidth = '1.5px';
+            line.style.filter = 'none';
+        });
+        document.querySelectorAll('.uc-line-' + id).forEach(line => {
+            line.style.stroke = 'var(--accent)';
+            line.style.strokeWidth = '2.5px';
+            line.style.filter = 'drop-shadow(0 0 6px rgba(6, 182, 212, 0.5))';
+        });
+
+        // Highlight related actors
+        document.querySelectorAll('.uc-actor').forEach(actor => {
+            actor.style.opacity = '0.3';
+        });
+        actorIds.forEach(actorId => {
+            const act = document.getElementById(actorId);
+            if (act) act.style.opacity = '1';
+        });
+
+        // Run typewriter simulation
+        runScan(id, text);
     };
 </script>
 

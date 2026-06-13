@@ -1,4 +1,5 @@
 -- Drop existing tables in reverse dependency order to avoid foreign key conflicts
+DROP TABLE IF EXISTS chat_message;
 DROP TABLE IF EXISTS notification;
 DROP TABLE IF EXISTS utilisateur_roles;
 DROP TABLE IF EXISTS utilisateur;
@@ -125,6 +126,18 @@ CREATE TABLE notification (
     date_envoi DATETIME NOT NULL,
     lu BOOLEAN DEFAULT FALSE,
     CONSTRAINT pk_notification PRIMARY KEY (id)
+) ENGINE=InnoDB;
+
+-- 10. Table : chat_message
+CREATE TABLE chat_message (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    sender_email VARCHAR(150) NOT NULL,
+    receiver_email VARCHAR(150) NOT NULL,
+    message TEXT NOT NULL,
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+    file_name VARCHAR(255) NULL,
+    file_type VARCHAR(100) NULL,
+    file_url VARCHAR(500) NULL
 ) ENGINE=InnoDB;
 
 
