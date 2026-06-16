@@ -7,4 +7,5 @@ import java.util.List;
 public interface ChatMessageDAO {
     void create(ChatMessage message) throws SQLException;
     List<ChatMessage> findHistory(String email1, String email2) throws SQLException;
+    void markAsRead(String senderEmail, String receiverEmail) throws SQLException;
 }

@@ -23,7 +23,10 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ChatWebSocket {
 
     private static final Map<String, Session> activeSessions = new ConcurrentHashMap<>();
-    private static final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
+    private static final ObjectMapper mapper = new ObjectMapper()
+            .configure(com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            .configure(com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+            .registerModule(new JavaTimeModule());
     private static final ChatMessageDAO chatMessageDAO = new ChatMessageDAOImpl();
     private static final NotificationDAO notificationDAO = new NotificationDAOImpl();
 
@@ -49,42 +52,105 @@ public class ChatWebSocket {
         if (senderEmail == null) return;
 
         try {
-            ChatMessage chatMsg = mapper.readValue(messageJson, ChatMessage.class);
-            chatMsg.setSenderEmail(senderEmail);
-            chatMsg.setTimestamp(LocalDateTime.now());
+            Map<String, Object> payload = mapper.readValue(messageJson, Map.class);
+            String type = (String) payload.getOrDefault("type", "CHAT");
 
-            // 1. Enregistrement en base de données
-            chatMessageDAO.create(chatMsg);
-
-            String chatMsgJson = mapper.writeValueAsString(chatMsg);
-
-            // 2. Envoi au destinataire s'il est en ligne
-            Session receiverSession = activeSessions.get(chatMsg.getReceiverEmail());
-            if (receiverSession != null && receiverSession.isOpen()) {
-                receiverSession.getBasicRemote().sendText(chatMsgJson);
+            if ("TYPING".equals(type)) {
+                String receiverEmail = (String) payload.get("receiverEmail");
+                Boolean typing = (Boolean) payload.get("typing");
+                if (receiverEmail != null && typing != null) {
+                    Session receiverSession = activeSessions.get(receiverEmail);
+                    if (receiverSession != null && receiverSession.isOpen()) {
+                        String relayJson = mapper.writeValueAsString(Map.of(
+                            "type", "TYPING",
+                            "senderEmail", senderEmail,
+                            "typing", typing
+                        ));
+                        receiverSession.getBasicRemote().sendText(relayJson);
+                    }
+                }
+            } else if ("READ_RECEIPT".equals(type)) {
+                String counterpartyEmail = (String) payload.get("senderEmail");
+                if (counterpartyEmail != null) {
+                    chatMessageDAO.markAsRead(counterpartyEmail, senderEmail);
+                    Session counterpartySession = activeSessions.get(counterpartyEmail);
+                    if (counterpartySession != null && counterpartySession.isOpen()) {
+                        String relayJson = mapper.writeValueAsString(Map.of(
+                            "type", "READ_RECEIPT",
+                            "receiverEmail", senderEmail
+                        ));
+                        counterpartySession.getBasicRemote().sendText(relayJson);
+                    }
+                }
             } else {
-                // S'il est hors ligne, générer une notification classique dans l'application
-                Notification noti = new Notification();
-                noti.setExpediteur(senderEmail);
-                noti.setDestinataire(chatMsg.getReceiverEmail());
-                noti.setSujet("Nouveau message de chat de " + senderEmail);
-                noti.setMessage(chatMsg.getMessage());
-                noti.setDateEnvoi(LocalDateTime.now());
-                noti.setLu(false);
-                notificationDAO.create(noti);
+                // CHAT message
+                ChatMessage chatMsg = mapper.convertValue(payload, ChatMessage.class);
+                chatMsg.setSenderEmail(senderEmail);
+                chatMsg.setTimestamp(LocalDateTime.now());
+                chatMsg.setLu(false);
 
-                // Envoi d'un e-mail d'alerte
-                String subject = "Nouveau message de chat de la part de " + senderEmail;
-                String htmlContent = "<h3>Vous avez reçu un nouveau message de chat</h3>"
-                        + "<p><strong>De :</strong> " + senderEmail + "</p>"
-                        + "<p><strong>Message :</strong> " + chatMsg.getMessage() + "</p>"
-                        + "<p>Connectez-vous sur InterGo pour répondre : <a href='http://localhost:8082/intergo/chat'>Accéder au Chat</a></p>";
-                SendGridEmailUtil.sendEmail(chatMsg.getReceiverEmail(), subject, htmlContent);
+                Session receiverSession = activeSessions.get(chatMsg.getReceiverEmail());
+                boolean isReceiverOnline = (receiverSession != null && receiverSession.isOpen());
+
+                // 1. Enregistrement en base de données
+                chatMessageDAO.create(chatMsg);
+
+                // Build response map
+                Map<String, Object> responseMap = new java.util.HashMap<>();
+                responseMap.put("type", "CHAT");
+                responseMap.put("id", chatMsg.getId());
+                responseMap.put("senderEmail", chatMsg.getSenderEmail());
+                responseMap.put("receiverEmail", chatMsg.getReceiverEmail());
+                responseMap.put("message", chatMsg.getMessage());
+                responseMap.put("timestamp", chatMsg.getTimestamp().toString());
+                responseMap.put("fileName", chatMsg.getFileName());
+                responseMap.put("fileType", chatMsg.getFileType());
+                responseMap.put("fileUrl", chatMsg.getFileUrl());
+                responseMap.put("lu", chatMsg.isLu());
+                responseMap.put("delivered", isReceiverOnline);
+
+                String chatMsgJson = mapper.writeValueAsString(responseMap);
+
+                // 2. Envoi au destinataire s'il est en ligne
+                if (isReceiverOnline) {
+                    receiverSession.getBasicRemote().sendText(chatMsgJson);
+                } else {
+                    // S'il est hors ligne, générer une notification classique dans l'application
+                    Notification noti = new Notification();
+                    noti.setExpediteur(senderEmail);
+                    noti.setDestinataire(chatMsg.getReceiverEmail());
+                    noti.setSujet("Nouveau message de chat de " + senderEmail);
+                    noti.setMessage(chatMsg.getMessage());
+                    noti.setDateEnvoi(LocalDateTime.now());
+                    noti.setLu(false);
+                    notificationDAO.create(noti);
+
+                    // Envoi d'un e-mail d'alerte
+                    String subject = "Nouveau message de chat de la part de " + senderEmail;
+                    String htmlContent = "<h3>Vous avez reçu un nouveau message de chat</h3>"
+                            + "<p><strong>De :</strong> " + senderEmail + "</p>"
+                            + "<p><strong>Message :</strong> " + chatMsg.getMessage() + "</p>"
+                            + "<p>Connectez-vous sur InterGo pour répondre : <a href='http://localhost:8082/intergo/chat'>Accéder au Chat</a></p>";
+                    SendGridEmailUtil.sendEmail(chatMsg.getReceiverEmail(), subject, htmlContent);
+
+                    // Send SMS notification if receiver has a telephone number
+                    try {
+                        com.ict4dg19.intergo.dao.EmployeDAO employeDAO = new com.ict4dg19.intergo.dao.EmployeDAOImpl();
+                        com.ict4dg19.intergo.model.Employe destEmp = employeDAO.findByEmail(chatMsg.getReceiverEmail());
+                        if (destEmp != null && destEmp.getTelephone() != null && !destEmp.getTelephone().trim().isEmpty()) {
+                            String rawMsg = chatMsg.getMessage() != null ? chatMsg.getMessage() : "";
+                            String cleanMsg = rawMsg.length() > 100 ? rawMsg.substring(0, 97) + "..." : rawMsg;
+                            String smsMessage = "InterGo Chat : Nouveau message de " + senderEmail + " : " + cleanMsg;
+                            com.ict4dg19.intergo.util.SMSUtil.sendSMS(destEmp.getTelephone(), smsMessage);
+                        }
+                    } catch (Exception ex) {
+                        System.err.println("[ChatWebSocket] Failed to send chat notification SMS: " + ex.getMessage());
+                    }
+                }
+
+                // 3. Renvoyer au format de confirmation à l'expéditeur
+                session.getBasicRemote().sendText(chatMsgJson);
             }
-
-            // 3. Renvoyer au format de confirmation à l'expéditeur
-            session.getBasicRemote().sendText(chatMsgJson);
-
         } catch (Exception e) {
             System.err.println("[ChatWebSocket] Error processing message: " + e.getMessage());
             e.printStackTrace();

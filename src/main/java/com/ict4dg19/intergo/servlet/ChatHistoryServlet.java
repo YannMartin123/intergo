@@ -25,7 +25,9 @@ public class ChatHistoryServlet extends HttpServlet {
     @Override
     public void init() {
         chatMessageDAO = new ChatMessageDAOImpl();
-        mapper = new ObjectMapper().registerModule(new JavaTimeModule());
+        mapper = new ObjectMapper()
+            .registerModule(new JavaTimeModule())
+            .configure(com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
     }
 
     @Override

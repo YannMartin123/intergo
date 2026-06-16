@@ -153,6 +153,20 @@ public class CongeServlet extends HttpServlet {
                     + "<p>Veuillez vous connecter sur le portail InterGo pour valider ou refuser cette demande.</p>";
             com.ict4dg19.intergo.util.SendGridEmailUtil.sendEmail("admin@entreprise.com", subject, htmlContent);
             com.ict4dg19.intergo.util.SendGridEmailUtil.sendEmail("m.laurent@entreprise.com", subject, htmlContent);
+            
+            // Send SMS notification to RH / Admin if telephone is provided
+            try {
+                Employe adminEmp = employeDAO.findByEmail("admin@entreprise.com");
+                if (adminEmp != null && adminEmp.getTelephone() != null && !adminEmp.getTelephone().trim().isEmpty()) {
+                    com.ict4dg19.intergo.util.SMSUtil.sendSMS(adminEmp.getTelephone(), "InterGo : Nouvelle demande de conge de " + e.getPrenom() + " " + e.getNom() + " (" + c.getNbJours() + "j)");
+                }
+                Employe managerEmp = employeDAO.findByEmail("m.laurent@entreprise.com");
+                if (managerEmp != null && managerEmp.getTelephone() != null && !managerEmp.getTelephone().trim().isEmpty()) {
+                    com.ict4dg19.intergo.util.SMSUtil.sendSMS(managerEmp.getTelephone(), "InterGo : Nouvelle demande de conge de " + e.getPrenom() + " " + e.getNom() + " (" + c.getNbJours() + "j)");
+                }
+            } catch (Exception ex) {
+                System.err.println("[CongeServlet] Failed to send leave submission SMS: " + ex.getMessage());
+            }
         }
         
         response.sendRedirect(request.getContextPath() + "/conges");
@@ -248,6 +262,12 @@ public class CongeServlet extends HttpServlet {
                         + "<p><strong>Traitee par :</strong> " + c.getApprouvePar() + "</p>"
                         + "<p>Merci,<br>L'equipe RH InterGo</p>";
                 com.ict4dg19.intergo.util.SendGridEmailUtil.sendEmail(e.getEmail(), subject, htmlContent);
+            }
+            
+            // Send SMS notification to employee if telephone is provided
+            if (e != null && e.getTelephone() != null && !e.getTelephone().trim().isEmpty()) {
+                String smsMessage = "InterGo : Votre demande de conge de " + c.getNbJours() + "j a ete " + ("APPROUVE".equals(statut) ? "VALIDE" : "REFUSE") + ".";
+                com.ict4dg19.intergo.util.SMSUtil.sendSMS(e.getTelephone(), smsMessage);
             }
         }
         response.sendRedirect(request.getContextPath() + "/conges");

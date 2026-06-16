@@ -137,7 +137,8 @@ CREATE TABLE chat_message (
     timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
     file_name VARCHAR(255) NULL,
     file_type VARCHAR(100) NULL,
-    file_url VARCHAR(500) NULL
+    file_url VARCHAR(500) NULL,
+    lu BOOLEAN DEFAULT FALSE
 ) ENGINE=InnoDB;
 
 

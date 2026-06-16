@@ -28,7 +28,7 @@ import java.util.UUID;
 )
 public class ChatUploadServlet extends HttpServlet {
 
-    private static final List<String> ALLOWED_EXTENSIONS = Arrays.asList("pdf", "png", "jpg", "jpeg", "docx", "xlsx", "pptx", "txt");
+    private static final List<String> ALLOWED_EXTENSIONS = Arrays.asList("pdf", "png", "jpg", "jpeg", "docx", "xlsx", "pptx", "txt", "webm", "wav", "mp3", "ogg", "m4a");
     private static final long MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
     private ObjectMapper mapper;
 
@@ -74,7 +74,7 @@ public class ChatUploadServlet extends HttpServlet {
             String extension = submittedFileName.substring(submittedFileName.lastIndexOf(".") + 1).toLowerCase();
             if (!ALLOWED_EXTENSIONS.contains(extension)) {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                response.getWriter().write("{\"error\": \"Type de fichier non autorisé. Formats acceptés : PDF, PNG, JPG, JPEG, DOCX, XLSX, PPTX, TXT\"}");
+                response.getWriter().write("{\"error\": \"Type de fichier non autorisé. Formats acceptés : PDF, PNG, JPG, JPEG, DOCX, XLSX, PPTX, TXT et Audio (WEBM, WAV, MP3, OGG, M4A)\"}");
                 return;
             }
 

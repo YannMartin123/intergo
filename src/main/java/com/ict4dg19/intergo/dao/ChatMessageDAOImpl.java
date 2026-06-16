@@ -11,7 +11,7 @@ public class ChatMessageDAOImpl implements ChatMessageDAO {
 
     @Override
     public void create(ChatMessage message) throws SQLException {
-        String sql = "INSERT INTO chat_message (sender_email, receiver_email, message, timestamp, file_name, file_type, file_url) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO chat_message (sender_email, receiver_email, message, timestamp, file_name, file_type, file_url, lu) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, message.getSenderEmail());
@@ -21,6 +21,7 @@ public class ChatMessageDAOImpl implements ChatMessageDAO {
             ps.setString(5, message.getFileName());
             ps.setString(6, message.getFileType());
             ps.setString(7, message.getFileUrl());
+            ps.setBoolean(8, message.isLu());
             ps.executeUpdate();
 
             try (ResultSet rs = ps.getGeneratedKeys()) {
@@ -58,10 +59,22 @@ public class ChatMessageDAOImpl implements ChatMessageDAO {
                     msg.setFileName(rs.getString("file_name"));
                     msg.setFileType(rs.getString("file_type"));
                     msg.setFileUrl(rs.getString("file_url"));
+                    msg.setLu(rs.getBoolean("lu"));
                     list.add(msg);
                 }
             }
         }
         return list;
+    }
+
+    @Override
+    public void markAsRead(String senderEmail, String receiverEmail) throws SQLException {
+        String sql = "UPDATE chat_message SET lu = TRUE WHERE sender_email = ? AND receiver_email = ? AND lu = FALSE";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+          ps.setString(1, senderEmail);
+          ps.setString(2, receiverEmail);
+          ps.executeUpdate();
+        }
     }
 }

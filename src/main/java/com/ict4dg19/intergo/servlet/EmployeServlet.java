@@ -118,6 +118,12 @@ public class EmployeServlet extends HttpServlet {
             com.ict4dg19.intergo.util.SendGridEmailUtil.sendEmail(e.getEmail(), subject, htmlContent);
         }
         
+        // Send welcome SMS to new employee if telephone is provided
+        if (e.getTelephone() != null && !e.getTelephone().trim().isEmpty()) {
+            String smsMessage = "Bonjour " + e.getPrenom() + ", bienvenue chez InterGo ! Votre profil a ete cree. Matricule: " + e.getMatricule() + ".";
+            com.ict4dg19.intergo.util.SMSUtil.sendSMS(e.getTelephone(), smsMessage);
+        }
+        
         response.sendRedirect(request.getContextPath() + "/employes");
     }
 

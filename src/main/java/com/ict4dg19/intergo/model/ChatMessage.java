@@ -11,10 +11,11 @@ public class ChatMessage {
     private String fileName;
     private String fileType;
     private String fileUrl;
+    private boolean lu;
 
     public ChatMessage() {}
 
-    public ChatMessage(Long id, String senderEmail, String receiverEmail, String message, LocalDateTime timestamp, String fileName, String fileType, String fileUrl) {
+    public ChatMessage(Long id, String senderEmail, String receiverEmail, String message, LocalDateTime timestamp, String fileName, String fileType, String fileUrl, boolean lu) {
         this.id = id;
         this.senderEmail = senderEmail;
         this.receiverEmail = receiverEmail;
@@ -23,6 +24,7 @@ public class ChatMessage {
         this.fileName = fileName;
         this.fileType = fileType;
         this.fileUrl = fileUrl;
+        this.lu = lu;
     }
 
     // Getters and Setters
@@ -88,5 +90,13 @@ public class ChatMessage {
 
     public void setFileUrl(String fileUrl) {
         this.fileUrl = fileUrl;
+    }
+
+    public boolean isLu() {
+        return lu;
+    }
+
+    public void setLu(boolean lu) {
+        this.lu = lu;
     }
 }

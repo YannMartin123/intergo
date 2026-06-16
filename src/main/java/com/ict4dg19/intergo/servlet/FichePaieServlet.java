@@ -145,6 +145,12 @@ public class FichePaieServlet extends HttpServlet {
             com.ict4dg19.intergo.util.SendGridEmailUtil.sendEmail(e.getEmail(), subject, htmlContent);
         }
         
+        // Send SMS notification to employee if telephone is provided
+        if (e != null && e.getTelephone() != null && !e.getTelephone().trim().isEmpty()) {
+            String smsMessage = "InterGo : Votre fiche de paie pour le mois " + f.getMois() + " est disponible. Salaire Net: " + f.getSalaireNet() + " FCFA.";
+            com.ict4dg19.intergo.util.SMSUtil.sendSMS(e.getTelephone(), smsMessage);
+        }
+        
         response.sendRedirect(request.getContextPath() + "/fiches-paie");
     }
 

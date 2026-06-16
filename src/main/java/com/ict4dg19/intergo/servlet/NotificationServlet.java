@@ -96,6 +96,17 @@ public class NotificationServlet extends HttpServlet {
                         + "</div>";
 
                 SendGridEmailUtil.sendEmail(destinataire, "InterGo RH : " + sujet, emailHtml);
+
+                // Send SMS notification if recipient has a telephone number
+                try {
+                    Employe destEmp = employeDAO.findByEmail(destinataire);
+                    if (destEmp != null && destEmp.getTelephone() != null && !destEmp.getTelephone().trim().isEmpty()) {
+                        String smsMessage = "InterGo RH : Nouvelle notification de " + user.getEmail() + ". Sujet: " + sujet;
+                        com.ict4dg19.intergo.util.SMSUtil.sendSMS(destEmp.getTelephone(), smsMessage);
+                    }
+                } catch (Exception e) {
+                    System.err.println("[NotificationServlet] Failed to retrieve destination phone for SMS: " + e.getMessage());
+                }
             }
             response.sendRedirect(request.getContextPath() + "/notifications?sent=true");
 

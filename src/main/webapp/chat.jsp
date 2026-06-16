@@ -8,7 +8,7 @@
 <style>
     .chat-container {
         display: grid;
-        grid-template-columns: 320px 1fr;
+        grid-template-columns: 340px 1fr;
         height: calc(100vh - 140px);
         background: rgba(18, 24, 38, 0.6);
         backdrop-filter: blur(12px);
@@ -16,6 +16,7 @@
         border-radius: 16px;
         overflow: hidden;
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        position: relative;
     }
 
     /* Left Sidebar: Contacts */
@@ -27,7 +28,7 @@
     }
     .sidebar-search {
         padding: 16px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.02);
     }
     .search-input {
         width: 100%;
@@ -45,6 +46,38 @@
         border-color: var(--primary);
         box-shadow: 0 0 10px rgba(99, 102, 241, 0.2);
     }
+
+    /* Filters (WhatsApp Style) */
+    .sidebar-filters {
+        display: flex;
+        gap: 8px;
+        padding: 0 16px 12px 16px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .filter-btn {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 20px;
+        padding: 6px 14px;
+        color: var(--text-secondary);
+        font-size: 12px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        outline: none;
+    }
+    .filter-btn:hover {
+        background: rgba(255, 255, 255, 0.08);
+        color: white;
+        border-color: rgba(255, 255, 255, 0.15);
+    }
+    .filter-btn.active {
+        background: rgba(99, 102, 241, 0.2);
+        border-color: var(--primary);
+        color: white;
+        box-shadow: 0 0 10px rgba(99, 102, 241, 0.3);
+    }
+
     .contacts-list {
         flex: 1;
         overflow-y: auto;
@@ -83,6 +116,7 @@
         font-weight: 700;
         font-size: 14px;
         position: relative;
+        flex-shrink: 0;
     }
     .status-dot {
         width: 10px;
@@ -117,6 +151,7 @@
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+        margin-top: 2px;
     }
     .unread-badge {
         background: var(--danger);
@@ -133,6 +168,7 @@
         display: flex;
         flex-direction: column;
         background: rgba(13, 19, 31, 0.2);
+        position: relative;
     }
     .chat-header {
         padding: 16px 24px;
@@ -141,6 +177,7 @@
         justify-content: space-between;
         align-items: center;
         background: rgba(18, 24, 38, 0.4);
+        z-index: 10;
     }
     .chat-header-info {
         display: flex;
@@ -160,13 +197,14 @@
         gap: 12px;
         font-size: 12.5px;
         color: #fbd38d;
+        z-index: 5;
     }
     .rules-banner i {
         font-size: 18px;
         color: var(--warning);
     }
 
-    /* Messages Board */
+    /* Messages Board (WhatsApp Wallpaper Style) */
     .chat-messages {
         flex: 1;
         overflow-y: auto;
@@ -174,11 +212,14 @@
         display: flex;
         flex-direction: column;
         gap: 16px;
+        background-color: rgba(11, 20, 26, 0.45);
+        background-image: radial-gradient(rgba(99, 102, 241, 0.04) 1px, transparent 0);
+        background-size: 24px 24px;
     }
     .msg-group {
         display: flex;
         flex-direction: column;
-        max-width: 70%;
+        max-width: 65%;
     }
     .msg-group.outgoing {
         align-self: flex-end;
@@ -189,28 +230,35 @@
         align-items: flex-start;
     }
     .msg-bubble {
-        padding: 12px 16px;
-        border-radius: 16px;
+        padding: 10px 14px;
+        border-radius: 12px;
         font-size: 13.5px;
         line-height: 1.5;
         white-space: pre-wrap;
         word-break: break-word;
+        position: relative;
     }
     .outgoing .msg-bubble {
-        background: linear-gradient(135deg, var(--primary), var(--secondary));
-        color: white;
+        background: rgba(5, 97, 98, 0.45);
+        border: 1px solid rgba(5, 97, 98, 0.6);
+        color: #e9edef;
         border-bottom-right-radius: 4px;
-        box-shadow: 0 4px 15px rgba(99, 102, 241, 0.15);
+        box-shadow: 0 4px 15px rgba(5, 97, 98, 0.15);
     }
     .incoming .msg-bubble {
-        background: rgba(255, 255, 255, 0.04);
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        color: var(--text-main);
+        background: rgba(32, 44, 51, 0.45);
+        border: 1px solid rgba(32, 44, 51, 0.6);
+        color: #e9edef;
         border-bottom-left-radius: 4px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     }
-    .msg-meta {
+    .msg-meta-row {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 4px;
         font-size: 10px;
-        color: var(--text-muted);
+        color: rgba(255, 255, 255, 0.4);
         margin-top: 4px;
     }
 
@@ -237,16 +285,17 @@
         color: var(--accent);
     }
     .attachment-img {
-        max-width: 200px;
-        max-height: 150px;
+        max-width: 260px;
+        max-height: 180px;
         border-radius: 6px;
         margin-top: 8px;
         border: 1px solid rgba(255, 255, 255, 0.1);
         cursor: pointer;
         transition: transform 0.2s ease;
+        display: block;
     }
     .attachment-img:hover {
-        transform: scale(1.03);
+        transform: scale(1.02);
     }
 
     /* Bottom Input Bar */
@@ -257,6 +306,7 @@
         display: flex;
         flex-direction: column;
         gap: 10px;
+        position: relative;
     }
     .attachment-preview-panel {
         display: flex;
@@ -280,6 +330,7 @@
         border: none;
         color: var(--danger);
         cursor: pointer;
+        outline: none;
     }
     .input-row {
         display: flex;
@@ -296,9 +347,6 @@
         font-family: 'Inter', sans-serif;
         font-size: 13.5px;
         outline: none;
-        resize: none;
-        height: 44px;
-        line-height: 1.4;
         transition: border-color 0.3s ease;
     }
     .chat-input:focus {
@@ -316,6 +364,7 @@
         align-items: center;
         justify-content: center;
         transition: all 0.2s ease;
+        outline: none;
     }
     .action-btn:hover {
         background: rgba(255, 255, 255, 0.06);
@@ -334,11 +383,66 @@
         align-items: center;
         justify-content: center;
         transition: all 0.25s ease;
+        outline: none;
     }
     .send-btn:hover {
         background: var(--secondary);
         transform: scale(1.03);
         box-shadow: 0 0 12px rgba(99, 102, 241, 0.4);
+    }
+
+    /* Emoji Picker style */
+    .emoji-picker {
+        position: absolute;
+        bottom: 74px;
+        left: 24px;
+        background: rgba(18, 24, 38, 0.95);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 12px;
+        padding: 12px;
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 8px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        backdrop-filter: blur(12px);
+        width: 240px;
+    }
+    .emoji-picker span {
+        font-size: 20px;
+        cursor: pointer;
+        transition: transform 0.15s ease;
+        text-align: center;
+        user-select: none;
+    }
+    .emoji-picker span:hover {
+        transform: scale(1.25);
+    }
+
+    /* Voice Recording style overlay */
+    .recording-overlay {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex: 1;
+        background: rgba(239, 68, 68, 0.08);
+        border: 1px solid rgba(239, 68, 68, 0.25);
+        border-radius: 10px;
+        padding: 0 16px;
+        height: 44px;
+        color: #ef4444;
+    }
+    
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.4; }
+    }
+    .rec-blink {
+        width: 10px;
+        height: 10px;
+        background-color: #ef4444;
+        border-radius: 50%;
+        animation: pulse 1s infinite;
     }
 
     /* Empty state */
@@ -351,6 +455,7 @@
         color: var(--text-muted);
         text-align: center;
         padding: 40px;
+        background-color: rgba(11, 20, 26, 0.15);
     }
     .chat-empty-state i {
         font-size: 60px;
@@ -395,19 +500,28 @@
         <div class="sidebar-search">
             <input type="text" id="contact-search" class="search-input" placeholder="Rechercher un collègue..." onkeyup="filterContacts()">
         </div>
+        
+        <!-- Filters (WhatsApp Style) -->
+        <div class="sidebar-filters">
+            <button class="filter-btn active" onclick="setFilter('all')">Tous</button>
+            <button class="filter-btn" onclick="setFilter('online')">En ligne</button>
+            <button class="filter-btn" onclick="setFilter('unread')">Non lus</button>
+        </div>
+
         <div class="contacts-list" id="contacts-container">
-            <c:forEach var="emp" items="${listEmployes}">
-                <c:if test="${emp.email != sessionScope.utilisateurConnecte.email}">
-                    <div class="contact-item" id="contact-${fn:replace(emp.email, '@', '_at_')}" onclick="selectContact('${emp.email}', '${fn:escapeXml(emp.prenom)} ${fn:escapeXml(emp.nom)}')">
+            <c:forEach var="contact" items="${listContacts}">
+                <c:if test="${contact.email != sessionScope.utilisateurConnecte.email}">
+                    <div class="contact-item" id="contact-${fn:replace(contact.email, '@', '_at_')}" onclick="selectContact('${contact.email}', '${fn:escapeXml(contact.prenom)} ${fn:escapeXml(contact.nom)}')">
                         <div class="contact-avatar">
-                            ${fn:substring(emp.prenom, 0, 1)}${fn:substring(emp.nom, 0, 1)}
-                            <div class="status-dot" id="status-${fn:replace(emp.email, '@', '_at_')}"></div>
+                            ${fn:substring(contact.prenom, 0, 1)}${fn:substring(contact.nom, 0, 1)}
+                            <div class="status-dot" id="status-${fn:replace(contact.email, '@', '_at_')}"></div>
                         </div>
                         <div class="contact-info">
-                            <div class="contact-name"><c:out value="${emp.prenom} ${emp.nom}" /></div>
-                            <div class="contact-email"><c:out value="${emp.email}" /></div>
+                            <div class="contact-name"><c:out value="${contact.prenom} ${contact.nom}" /></div>
+                            <div class="contact-email"><c:out value="${contact.email}" /></div>
                         </div>
-                        <div class="unread-badge" id="badge-${fn:replace(emp.email, '@', '_at_')}" style="display:none;">0</div>
+                        <div class="unread-badge" id="badge-${fn:replace(contact.email, '@', '_at_')}" 
+                             style="${contact.unreadCount > 0 ? '' : 'display:none;'}">${contact.unreadCount}</div>
                     </div>
                 </c:if>
             </c:forEach>
@@ -432,6 +546,10 @@
                     <div>
                         <div class="contact-name" id="active-name">Collaborateur</div>
                         <div class="contact-email" id="active-email">email@entreprise.com</div>
+                        <!-- Typing Indicator -->
+                        <div class="typing-indicator" id="active-typing" style="display:none; color:#10b981; font-size:11.5px; font-weight:600; margin-top:2px;">
+                            <i class="fa-solid fa-circle-notch fa-spin" style="margin-right:4px;"></i> en train d'écrire...
+                        </div>
                     </div>
                 </div>
             </div>
@@ -441,7 +559,7 @@
                 <i class="fa-solid fa-circle-info"></i>
                 <div>
                     <strong>Charte de communication :</strong> Les échanges doivent rester strictement professionnels. 
-                    Formats autorisés : PDF, PNG, JPG, JPEG, DOCX, XLSX, PPTX, TXT.
+                    Formats autorisés : PDF, PNG, JPG, JPEG, DOCX, XLSX, PPTX, TXT et Audio (WEBM, WAV, MP3). Max 5 Mo.
                 </div>
             </div>
 
@@ -452,6 +570,28 @@
 
             <!-- Attachment Preview Area -->
             <div class="chat-input-area">
+                <!-- Emoji Picker Panel -->
+                <div id="emoji-picker" class="emoji-picker" style="display: none;">
+                    <span onclick="insertEmoji('😊')">😊</span>
+                    <span onclick="insertEmoji('👍')">👍</span>
+                    <span onclick="insertEmoji('🤝')">🤝</span>
+                    <span onclick="insertEmoji('👏')">👏</span>
+                    <span onclick="insertEmoji('🚀')">🚀</span>
+                    <span onclick="insertEmoji('💡')">💡</span>
+                    <span onclick="insertEmoji('✅')">✅</span>
+                    <span onclick="insertEmoji('❌')">❌</span>
+                    <span onclick="insertEmoji('📝')">📝</span>
+                    <span onclick="insertEmoji('📁')">📁</span>
+                    <span onclick="insertEmoji('💬')">💬</span>
+                    <span onclick="insertEmoji('🔥')">🔥</span>
+                    <span onclick="insertEmoji('⭐')">⭐</span>
+                    <span onclick="insertEmoji('👋')">👋</span>
+                    <span onclick="insertEmoji('🎉')">🎉</span>
+                    <span onclick="insertEmoji('⚠️')">⚠️</span>
+                    <span onclick="insertEmoji('📞')">📞</span>
+                    <span onclick="insertEmoji('📌')">📌</span>
+                </div>
+
                 <div class="attachment-preview-panel" id="attachment-preview" style="display:none;">
                     <i class="fa-solid fa-file-arrow-up" style="color:var(--accent); font-size:16px;"></i>
                     <span id="attachment-name">Fichier.pdf</span>
@@ -461,11 +601,24 @@
                 <!-- Input area -->
                 <div class="input-row">
                     <!-- File Trigger Button -->
-                    <button class="action-btn" onclick="triggerFileInput()" title="Ajouter un fichier de travail"><i class="fa-solid fa-paperclip"></i></button>
+                    <button class="action-btn" id="paperclip-btn" onclick="triggerFileInput()" title="Ajouter un fichier de travail"><i class="fa-solid fa-paperclip"></i></button>
                     <input type="file" id="chat-file-input" style="display:none;" onchange="handleFileUpload(event)">
 
-                    <!-- Text Area -->
-                    <input type="text" id="chat-message-input" class="chat-input" placeholder="Saisissez votre message professionnel..." onkeydown="handleKeyPress(event)">
+                    <!-- Emoji Trigger Button -->
+                    <button class="action-btn" id="emoji-btn" onclick="toggleEmojiPicker()" title="Ajouter un émoji"><i class="fa-regular fa-face-smile"></i></button>
+
+                    <!-- Recording overlay when active -->
+                    <div id="recording-overlay" class="recording-overlay" style="display:none;">
+                        <div class="rec-blink"></div>
+                        <span style="font-size:13px; font-weight:600; flex:1;">Vocal... <span id="record-timer">00:00</span></span>
+                        <button class="remove-attachment-btn" onclick="cancelRecording()" style="color:#ef4444; font-size:16px; padding: 0 8px;" title="Annuler"><i class="fa-solid fa-trash-can"></i></button>
+                    </div>
+
+                    <!-- Text Input -->
+                    <input type="text" id="chat-message-input" class="chat-input" placeholder="Saisissez votre message professionnel..." oninput="handleMessageInput()" onkeydown="handleKeyPress(event)">
+
+                    <!-- Audio Record Button -->
+                    <button class="action-btn" id="record-btn" onclick="toggleAudioRecording()" title="Enregistrer un message vocal"><i class="fa-solid fa-microphone"></i></button>
 
                     <!-- Send Button -->
                     <button class="send-btn" onclick="sendMessage()"><i class="fa-solid fa-paper-plane"></i></button>
@@ -493,6 +646,18 @@
     let activeContactEmail = null;
     let socket = null;
     let currentAttachment = null; // { url, fileName, fileType }
+    let currentFilter = 'all';
+
+    // Typing State Debounce variables
+    let typingTimeout = null;
+    let isCurrentlyTyping = false;
+
+    // MediaRecorder variables
+    let mediaRecorder = null;
+    let audioChunks = [];
+    let recordInterval = null;
+    let recordSeconds = 0;
+    let isRecording = false;
 
     // Initialize WebSockets
     function initWebSocket() {
@@ -510,10 +675,13 @@
             const data = JSON.parse(event.data);
 
             if (data.type === "STATUS_UPDATE") {
-                // Update online status dots
                 updateOnlineStatus(data.onlineUsers);
+            } else if (data.type === "TYPING") {
+                handleTypingEvent(data);
+            } else if (data.type === "READ_RECEIPT") {
+                handleReadReceipt(data);
             } else {
-                // It is a Chat Message
+                // CHAT Message
                 handleIncomingMessage(data);
             }
         };
@@ -545,6 +713,27 @@
                 }
             }
         });
+        applyFilters();
+    }
+
+    // Handle typing events in real-time
+    function handleTypingEvent(data) {
+        if (data.senderEmail === activeContactEmail) {
+            const typingDiv = document.getElementById('active-typing');
+            if (typingDiv) {
+                typingDiv.style.display = data.typing ? 'block' : 'none';
+            }
+        }
+    }
+
+    // Handle read receipts to turn ticks blue
+    function handleReadReceipt(data) {
+        if (data.receiverEmail === activeContactEmail) {
+            // Turn ticks blue for all outgoing messages in currently open chat
+            document.querySelectorAll('.msg-group.outgoing .fa-check-double').forEach(icon => {
+                icon.style.color = '#53bdeb';
+            });
+        }
     }
 
     // Handle receiving a message
@@ -553,17 +742,56 @@
         const isFromSelf = (msg.senderEmail === currentUserEmail);
 
         if (isFromActiveContact || isFromSelf) {
-            // Render inside chat window
             appendMessage(msg);
             scrollChatToBottom();
+
+            // If we received an unread message from the active contact, send read receipt immediately
+            if (isFromActiveContact) {
+                sendReadReceipt(msg.senderEmail);
+            }
         } else {
             // Update sidebar unread badge
             incrementUnreadBadge(msg.senderEmail);
-
-            // Play sound and show Toast alert
             playNotifSound();
             showToast("Nouveau message de " + msg.senderEmail, msg.message);
         }
+    }
+
+    // Send read receipt
+    function sendReadReceipt(senderEmail) {
+        if (socket && socket.readyState === WebSocket.OPEN) {
+            socket.send(JSON.stringify({
+                type: "READ_RECEIPT",
+                senderEmail: senderEmail
+            }));
+        }
+    }
+
+    // Robust Date parsing helper
+    function parseDate(ts) {
+        if (!ts) return new Date();
+        if (typeof ts === 'string') {
+            return new Date(ts);
+        }
+        if (Array.isArray(ts)) {
+            const year = ts[0] || 2026;
+            const month = (ts[1] !== undefined) ? (ts[1] - 1) : 0;
+            const day = ts[2] || 1;
+            const hour = ts[3] || 0;
+            const minute = ts[4] || 0;
+            const second = ts[5] || 0;
+            return new Date(year, month, day, hour, minute, second);
+        }
+        if (typeof ts === 'object') {
+            const year = ts.year || 2026;
+            const month = (ts.monthValue !== undefined) ? (ts.monthValue - 1) : 0;
+            const day = ts.dayOfMonth || 1;
+            const hour = ts.hour || 0;
+            const minute = ts.minute || 0;
+            const second = ts.second || 0;
+            return new Date(year, month, day, hour, minute, second);
+        }
+        return new Date(ts);
     }
 
     // Append message to HTML board
@@ -576,11 +804,20 @@
 
         const bubbleDiv = document.createElement('div');
         bubbleDiv.className = "msg-bubble";
-        bubbleDiv.textContent = msg.message;
+        
+        // Render text if present
+        if (msg.message && msg.message.trim() !== "") {
+            const textSpan = document.createElement('span');
+            textSpan.textContent = msg.message;
+            bubbleDiv.appendChild(textSpan);
+        }
 
         // Render file attachment if present
         if (msg.fileUrl) {
             const isImage = msg.fileType && msg.fileType.startsWith('image/');
+            const isAudio = (msg.fileType && msg.fileType.startsWith('audio/')) || 
+                            (msg.fileName && (msg.fileName.endsWith('.webm') || msg.fileName.endsWith('.wav') || msg.fileName.endsWith('.mp3') || msg.fileName.endsWith('.ogg') || msg.fileName.endsWith('.m4a')));
+
             if (isImage) {
                 const img = document.createElement('img');
                 img.className = "attachment-img";
@@ -588,6 +825,27 @@
                 img.alt = msg.fileName;
                 img.onclick = () => window.open(msg.fileUrl, '_blank');
                 bubbleDiv.appendChild(img);
+            } else if (isAudio) {
+                const audioContainer = document.createElement('div');
+                audioContainer.style.marginTop = msg.message ? '8px' : '0px';
+                audioContainer.style.display = 'flex';
+                audioContainer.style.alignItems = 'center';
+                audioContainer.style.gap = '8px';
+                
+                const micIcon = document.createElement('i');
+                micIcon.className = "fa-solid fa-microphone";
+                micIcon.style.color = isSelf ? "rgba(255,255,255,0.7)" : "var(--primary)";
+                micIcon.style.fontSize = "16px";
+
+                const audioEl = document.createElement('audio');
+                audioEl.src = msg.fileUrl;
+                audioEl.controls = true;
+                audioEl.style.maxHeight = '32px';
+                audioEl.style.outline = 'none';
+
+                audioContainer.appendChild(micIcon);
+                audioContainer.appendChild(audioEl);
+                bubbleDiv.appendChild(audioContainer);
             } else {
                 const attachLink = document.createElement('a');
                 attachLink.className = "msg-attachment";
@@ -599,16 +857,35 @@
                 if (msg.fileType && msg.fileType.includes('pdf')) fileIcon = "fa-solid fa-file-pdf";
                 else if (msg.fileName.endsWith('.docx') || msg.fileName.endsWith('.doc')) fileIcon = "fa-solid fa-file-word";
                 else if (msg.fileName.endsWith('.xlsx') || msg.fileName.endsWith('.xls')) fileIcon = "fa-solid fa-file-excel";
+                else if (msg.fileName.endsWith('.pptx') || msg.fileName.endsWith('.ppt')) fileIcon = "fa-solid fa-file-powerpoint";
 
                 attachLink.innerHTML = `<i class="${fileIcon}"></i> <span>${msg.fileName}</span>`;
                 bubbleDiv.appendChild(attachLink);
             }
         }
 
+        // Meta Row (Time + Ticks)
         const metaDiv = document.createElement('div');
-        metaDiv.className = "msg-meta";
-        const dateStr = msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-        metaDiv.textContent = dateStr;
+        metaDiv.className = "msg-meta-row";
+        const date = parseDate(msg.timestamp);
+        let dateStr = "00:00";
+        try {
+            dateStr = date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        } catch (e) {
+            console.error("Error formatting date: ", e);
+        }
+        metaDiv.innerHTML = `<span>${dateStr}</span>`;
+
+        if (isSelf) {
+            // Render ticks
+            if (msg.lu) {
+                metaDiv.innerHTML += `<i class="fa-solid fa-check-double" style="color: #53bdeb; font-size: 11px;" title="Lu"></i>`;
+            } else if (msg.delivered) {
+                metaDiv.innerHTML += `<i class="fa-solid fa-check-double" style="color: rgba(255,255,255,0.4); font-size: 11px;" title="Distribué"></i>`;
+            } else {
+                metaDiv.innerHTML += `<i class="fa-solid fa-check" style="color: rgba(255,255,255,0.4); font-size: 11px;" title="Envoyé"></i>`;
+            }
+        }
 
         groupDiv.appendChild(bubbleDiv);
         groupDiv.appendChild(metaDiv);
@@ -631,6 +908,7 @@
             badge.textContent = count;
             badge.style.display = 'block';
         }
+        applyFilters();
     }
 
     // Clear unread badge
@@ -641,6 +919,7 @@
             badge.textContent = '0';
             badge.style.display = 'none';
         }
+        applyFilters();
     }
 
     // Toast alerts
@@ -673,13 +952,15 @@
         const elementId = 'contact-' + email.replace(/@/g, '_at_');
         document.getElementById(elementId).classList.add('active');
 
-        // Clear unread badge
+        // Clear unread badge and send read receipt
         clearUnreadBadge(email);
+        sendReadReceipt(email);
 
         // Update header details
         document.getElementById('active-name').textContent = fullName;
         document.getElementById('active-email').textContent = email;
         document.getElementById('active-avatar').textContent = fullName.split(' ').map(n => n[0]).join('');
+        document.getElementById('active-typing').style.display = 'none';
 
         // Switch panels
         document.getElementById('empty-state').style.display = 'none';
@@ -696,7 +977,13 @@
                 if (messages.length === 0) {
                     messagesContainer.innerHTML = '<div style="text-align:center; padding: 40px 20px; color:var(--text-muted); font-size:13px; font-style:italic;">Début de la conversation sécurisée. Restez courtois et professionnel.</div>';
                 } else {
-                    messages.forEach(msg => appendMessage(msg));
+                    messages.forEach(msg => {
+                        // Mark all historical unread messages as delivered visually for outgoing
+                        if (!msg.lu) {
+                            msg.delivered = true;
+                        }
+                        appendMessage(msg);
+                    });
                 }
                 scrollChatToBottom();
                 document.getElementById('chat-message-input').focus();
@@ -751,7 +1038,6 @@
             return res.json();
         })
         .then(data => {
-            // Upload success
             currentAttachment = data; // contains { url, fileName, fileType }
             document.getElementById('attachment-name').textContent = file.name;
         })
@@ -768,10 +1054,172 @@
         document.getElementById('attachment-preview').style.display = 'none';
     }
 
+    // Typing state handler on keypress/input
+    function handleMessageInput() {
+        if (!activeContactEmail) return;
+        if (!isCurrentlyTyping) {
+            isCurrentlyTyping = true;
+            sendTypingState(true);
+        }
+        clearTimeout(typingTimeout);
+        typingTimeout = setTimeout(() => {
+            isCurrentlyTyping = false;
+            sendTypingState(false);
+        }, 2000);
+    }
+
+    function sendTypingState(typing) {
+        if (socket && socket.readyState === WebSocket.OPEN && activeContactEmail) {
+            socket.send(JSON.stringify({
+                type: "TYPING",
+                receiverEmail: activeContactEmail,
+                typing: typing
+            }));
+        }
+    }
+
+    // Emoji picker handlers
+    function toggleEmojiPicker() {
+        const picker = document.getElementById('emoji-picker');
+        picker.style.display = picker.style.display === 'none' ? 'grid' : 'none';
+    }
+
+    function insertEmoji(emoji) {
+        const input = document.getElementById('chat-message-input');
+        input.value += emoji;
+        input.focus();
+        handleMessageInput();
+        document.getElementById('emoji-picker').style.display = 'none';
+    }
+
+    // Close emoji picker when clicking outside
+    document.addEventListener('click', function(e) {
+        const picker = document.getElementById('emoji-picker');
+        const btn = document.getElementById('emoji-btn');
+        if (picker && picker.style.display !== 'none' && !picker.contains(e.target) && e.target !== btn && !btn.contains(e.target)) {
+            picker.style.display = 'none';
+        }
+    });
+
+    // MediaRecorder / Audio Voice Message Recording logic
+    function toggleAudioRecording() {
+        if (isRecording) {
+            stopAndSendRecording();
+        } else {
+            startRecording();
+        }
+    }
+
+    function startRecording() {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            alert("L'enregistrement audio n'est pas pris en charge par votre navigateur.");
+            return;
+        }
+
+        navigator.mediaDevices.getUserMedia({ audio: true })
+            .then(stream => {
+                isRecording = true;
+                audioChunks = [];
+                mediaRecorder = new MediaRecorder(stream);
+                mediaRecorder.ondataavailable = event => {
+                    audioChunks.push(event.data);
+                };
+
+                mediaRecorder.onstop = () => {
+                    stream.getTracks().forEach(track => track.stop());
+                    if (audioChunks.length === 0) return;
+
+                    const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                    uploadAudioBlob(audioBlob);
+                };
+
+                mediaRecorder.start();
+
+                // UI Changes
+                document.getElementById('recording-overlay').style.display = 'flex';
+                document.getElementById('chat-message-input').style.display = 'none';
+                document.getElementById('paperclip-btn').style.display = 'none';
+                document.getElementById('emoji-btn').style.display = 'none';
+                document.getElementById('record-btn').innerHTML = '<i class="fa-solid fa-square" style="color:#ef4444;"></i>';
+                document.getElementById('record-btn').title = "Arrêter et envoyer";
+                document.getElementById('record-timer').textContent = "00:00";
+                
+                recordSeconds = 0;
+                recordInterval = setInterval(() => {
+                    recordSeconds++;
+                    const mins = Math.floor(recordSeconds / 60).toString().padStart(2, '0');
+                    const secs = (recordSeconds % 60).toString().padStart(2, '0');
+                    document.getElementById('record-timer').textContent = mins + ":" + secs;
+                }, 1000);
+            })
+            .catch(err => {
+                console.error("Microphone access error:", err);
+                alert("Impossible d'accéder au micro. Veuillez autoriser l'accès.");
+            });
+    }
+
+    function stopAndSendRecording() {
+        if (!isRecording) return;
+        clearInterval(recordInterval);
+        mediaRecorder.stop();
+        resetRecordingUI();
+    }
+
+    function cancelRecording() {
+        if (!isRecording) return;
+        clearInterval(recordInterval);
+        audioChunks = []; // Clear chunks so onstop won't upload
+        mediaRecorder.stop();
+        resetRecordingUI();
+    }
+
+    function resetRecordingUI() {
+        isRecording = false;
+        document.getElementById('recording-overlay').style.display = 'none';
+        document.getElementById('chat-message-input').style.display = 'block';
+        document.getElementById('paperclip-btn').style.display = 'flex';
+        document.getElementById('emoji-btn').style.display = 'flex';
+        document.getElementById('record-btn').innerHTML = '<i class="fa-solid fa-microphone"></i>';
+        document.getElementById('record-btn').title = "Enregistrer un message vocal";
+        document.getElementById('chat-message-input').focus();
+    }
+
+    function uploadAudioBlob(blob) {
+        const formData = new FormData();
+        const timestamp = new Date().getTime();
+        const filename = "vocal_" + timestamp + ".webm";
+        formData.append("file", blob, filename);
+
+        document.getElementById('attachment-preview').style.display = 'flex';
+        document.getElementById('attachment-name').textContent = "Téléversement du message vocal...";
+
+        fetch(contextPath + '/chat/upload', {
+            method: 'POST',
+            body: formData
+        })
+        .then(res => {
+            if (!res.ok) {
+                return res.json().then(json => { throw new Error(json.error || "Erreur de téléversement"); });
+            }
+            return res.json();
+        })
+        .then(data => {
+            currentAttachment = data; // contains { url, fileName, fileType }
+            document.getElementById('attachment-name').textContent = "🎙️ Message vocal prêt";
+            // Auto-send the audio message
+            sendMessage();
+        })
+        .catch(err => {
+            alert("Erreur lors de l'enregistrement de l'audio: " + err.message);
+            clearAttachment();
+        });
+    }
+
     // Key press handler
     function handleKeyPress(e) {
         if (e.key === 'Enter') {
             sendMessage();
+            e.preventDefault();
         }
     }
 
@@ -782,6 +1230,13 @@
 
         if (text === "" && !currentAttachment) return;
         if (!activeContactEmail) return;
+
+        // Cancel any pending typing timeouts and declare typing stopped
+        clearTimeout(typingTimeout);
+        if (isCurrentlyTyping) {
+            isCurrentlyTyping = false;
+            sendTypingState(false);
+        }
 
         const payload = {
             receiverEmail: activeContactEmail,
@@ -800,18 +1255,43 @@
         }
     }
 
-    // Contact Filtering list search
-    function filterContacts() {
+    // Set contact filtering tab/mode
+    function setFilter(filterType) {
+        currentFilter = filterType;
+        document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+        event.currentTarget.classList.add('active');
+        applyFilters();
+    }
+
+    // Apply combined text search and tab filter
+    function applyFilters() {
         const q = document.getElementById('contact-search').value.toLowerCase();
         document.querySelectorAll('.contact-item').forEach(item => {
             const name = item.querySelector('.contact-name').textContent.toLowerCase();
             const email = item.querySelector('.contact-email').textContent.toLowerCase();
-            if (name.includes(q) || email.includes(q)) {
+            
+            const matchesText = name.includes(q) || email.includes(q);
+            
+            let matchesFilter = true;
+            if (currentFilter === 'online') {
+                const dot = item.querySelector('.status-dot');
+                matchesFilter = dot && dot.classList.contains('online');
+            } else if (currentFilter === 'unread') {
+                const badge = item.querySelector('.unread-badge');
+                const count = parseInt(badge.textContent) || 0;
+                matchesFilter = count > 0;
+            }
+            
+            if (matchesText && matchesFilter) {
                 item.style.display = 'flex';
             } else {
                 item.style.display = 'none';
             }
         });
+    }
+
+    function filterContacts() {
+        applyFilters();
     }
 
     // Start Websockets

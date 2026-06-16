@@ -56,6 +56,23 @@ public class EmployeDAOImpl implements EmployeDAO {
     }
 
     @Override
+    public Employe findByEmail(String email) {
+        String sql = "SELECT e.*, d.nom AS dept_nom, d.responsable AS dept_resp FROM employe e JOIN departement d ON e.departement_id = d.id WHERE e.email = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, email);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return extractEmploye(rs);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
     public List<Employe> findAll() {
         List<Employe> employes = new ArrayList<>();
         String sql = "SELECT e.*, d.nom AS dept_nom, d.responsable AS dept_resp FROM employe e JOIN departement d ON e.departement_id = d.id";

@@ -129,6 +129,23 @@ public class RegisterServlet extends HttpServlet {
                         + "<br><hr><p style='font-size:11px;color:#666;'>Ceci est un e-mail automatique de notification de sécurité InterGo.</p>";
                 com.ict4dg19.intergo.util.SendGridEmailUtil.sendEmail(email, emailSubject, emailBody);
 
+                // Send SMS notification if employee has a telephone number
+                try {
+                    com.ict4dg19.intergo.dao.EmployeDAO employeDAO = new com.ict4dg19.intergo.dao.EmployeDAOImpl();
+                    com.ict4dg19.intergo.model.Employe e = null;
+                    if (nouvelUtilisateur.getEmployeId() != null) {
+                        e = employeDAO.findById(nouvelUtilisateur.getEmployeId());
+                    } else {
+                        e = employeDAO.findByEmail(email);
+                    }
+                    if (e != null && e.getTelephone() != null && !e.getTelephone().trim().isEmpty()) {
+                        String smsMessage = "Bienvenue chez InterGo ! Votre compte utilisateur a ete cree pour " + email + ".";
+                        com.ict4dg19.intergo.util.SMSUtil.sendSMS(e.getTelephone(), smsMessage);
+                    }
+                } catch (Exception ex) {
+                    System.err.println("[RegisterServlet] Failed to send registration SMS: " + ex.getMessage());
+                }
+
                 // 6. Redirection vers login avec un message de succès (pattern Post-Redirect-Get)
                 response.sendRedirect(request.getContextPath()
                         + "/login?message=" + encode("Compte créé avec succès ! Vous pouvez vous connecter."));
